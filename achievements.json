@@ -1,0 +1,23 @@
+{
+  "first_steps":          { "icon": "🎯", "starThreshold": 3 },
+  "class_d_player":       { "icon": "♟️", "starThreshold": 15 },
+  "class_c_player":       { "icon": "♞", "starThreshold": 30 },
+  "class_b_player":       { "icon": "♝", "starThreshold": 60 },
+  "class_a_player":       { "icon": "♜", "starThreshold": 90 },
+  "expert":               { "icon": "♛", "starThreshold": 120 },
+  "candidate_master":     { "icon": "🎖️", "starThreshold": 150 },
+  "fide_master":          { "icon": "🥉", "starThreshold": 165 },
+  "international_master": { "icon": "🥈", "starThreshold": 180 },
+  "grandmaster":          { "icon": "🥇", "starThreshold": 210 },
+  "super_grandmaster":    { "icon": "👑", "starThreshold": 240 },
+  "normal_master":        { "icon": "✨", "completeLevelRange": [0, 9] },
+  "wall_master":          { "icon": "🧱", "completeLevelRange": [10, 19] },
+  "chaos_master":         { "icon": "🌪️", "completeLevelRange": [20, 29] },
+  "border_master":        { "icon": "🔲", "completeLevelRange": [30, 39] },
+  "teleport_master":      { "icon": "🌀", "completeLevelRange": [75, 79] },
+  "ultimate_conqueror":   { "icon": "💀", "completeLevelRange": [70, 74] },
+  "perfectionist":        { "icon": "💯", "perfectCount": 80 },
+  "speed_demon":          { "icon": "⚡", "perfectLevelRange": [0, 19] },
+  "tactician":            { "icon": "🎯", "perfectCount": 50 },
+  "time_master":          { "icon": "⏱️", "timedPerfectCount": 5 }
+}
