@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CHESSMANIA - Ultimate Edition 80 Levels</title>
+  <style>
+    * { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #222;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0px;
+    padding-top: 0px;
+    min-height: 100vh;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    transition: background 0.3s ease;
+}
+    body.light-theme  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    body.dark-theme   { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+    body.nature-theme { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%); }
+    #container { width: 100%; max-width: 700px; }
+#board {
+    display: grid;
+    gap: 0px;
+    width: fit-content;
+    padding: 4px;
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+    border: 2px solid #654321;
+    border-radius: 5px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    position: relative;
+    overflow: visible;
+}
+    #board::before { content: ''; position: absolute; inset: -8px; border: 3px solid #8B7355; border-radius: 8px; pointer-events: none; }
+.cell {
+    background: #f0d9b5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: none;
+    border: none;
+    position: relative;
+    overflow: visible;
+    font-size: 16px;
+}
+    .dark { background: #b58863; }
+    .collapsed { background: #2a1810 !important; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+    .blocked { background: #1a0f0a !important; cursor: not-allowed; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
+    .blocked.solo::before { content: '🚫'; position: absolute; font-size: 28px; opacity: 0.6; pointer-events: none; }
+    .blocked.wall { background: linear-gradient(160deg, #241008 0%, #3a1a0a 40%, #1a0a05 100%) !important; box-shadow: inset 0 0 8px rgba(0,0,0,0.9), inset 2px 2px 4px rgba(255,120,50,0.05); }
+    .blocked.wall::after { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent, transparent 14px, rgba(0,0,0,0.5) 14px, rgba(0,0,0,0.5) 16px), repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,0.4) 18px, rgba(0,0,0,0.4) 20px); pointer-events: none; }
+    .valid { background: #ffeb3b; }
+    .target { background: #4CAF50 !important; animation: target-pulse 1.5s infinite; }
+    @keyframes target-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.7); } 50% { box-shadow: 0 0 0 10px rgba(76,175,80,0); } }
+    .target::after { content: '🎯'; position: absolute; font-size: 32px; pointer-events: none; }
+    .knight img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
+    .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px); }
+    .stats { display: flex; gap: 25px; flex-wrap: wrap; }
+    .stat-item { text-align: center; }
+    .stat-label { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-value { font-size: 28px; font-weight: bold; color: #ffeb3b; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .record { color: #4caf50 !important; }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; justify-content: center; }
+    button { padding: 10px 20px; font-size: 15px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
+    button:active:not(:disabled) { transform: translateY(0); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.danger  { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    button.success { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    button.info    { background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%); }
+    #modeSelection { text-align: center; }
+    #modeSelection h1 { font-size: 48px; margin: 0; text-shadow: 0 4px 8px rgba(0,0,0,0.3); animation: title-bounce 2s ease-in-out infinite; }
+    @keyframes title-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .modeButtons { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
+    .modeBtn { padding: 25px 30px; font-size: 20px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .modeBtn:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .easyBtn    { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); color: white; }
+    .classicBtn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .hardBtn    { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+    .expertBtn  { background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%); color: white; }
+    .puzzleBtn  { background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%); color: white; }
+    .statsBtn   { background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); color: white; }
+    #puzzleSelection, #statsScreen { display: none; text-align: center; }
+    .puzzleLevels { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+    .levelBtn { padding: 20px; font-size: 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; position: relative; }
+    .levelBtn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .levelBtn.completed  { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); }
+    .levelBtn.locked     { background: linear-gradient(135deg, #555 0%, #333 100%); cursor: not-allowed; opacity: 0.6; }
+    .levelBtn.extreme    { background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%); }
+    .levelBtn.extreme.completed { background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); }
+    .levelBtn.chaos      { background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); }
+    .levelBtn.chaos.completed { background: linear-gradient(135deg, #F57C00 0%, #EF6C00 100%); }
+    .levelBtn.border     { background: linear-gradient(135deg, #5E35B1 0%, #512DA8 100%); }
+    .levelBtn.border.completed { background: linear-gradient(135deg, #7E57C2 0%, #673AB7 100%); }
+    .levelBtn.ultimate   { background: linear-gradient(135deg, #C2185B 0%, #880E4F 100%); }
+    .levelBtn.ultimate.completed { background: linear-gradient(135deg, #E91E63 0%, #AD1457 100%); }
+    .levelBtn.timed      { background: linear-gradient(135deg, #FF8F00 0%, #FF6F00 100%); }
+    .levelBtn.timed.completed { background: linear-gradient(135deg, #FFB300 0%, #FF8F00 100%); }
+    .stars { font-size: 16px; margin-top: 5px; }
+    .level-badge { position: absolute; top: 5px; right: 5px; font-size: 12px; padding: 2px 6px; background: rgba(0,0,0,0.3); border-radius: 4px; }
+    #gameScreen { display: none; }
+    #timerContainer { display: none; text-align: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-top: 15px; }
+    #timer { font-size: 42px; font-weight: bold; color: #ffeb3b; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    #timer.warning { color: #ff5252; animation: timer-pulse 0.5s infinite; }
+    @keyframes timer-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+    .puzzle-info { display: none; background: rgba(0,0,0,0.4); padding: 20px 15px 15px; border-radius: 8px; margin-top: 15px; text-align: center; }
+    .puzzle-info.active { display: block; }
+    .level-number { font-size: 18px; font-weight: bold; color: #FFA726; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; }
+    .moves-counter { font-size: 48px; font-weight: bold; color: #ffeb3b; margin-top: 8px; }
+    .moves-label { font-size: 12px; color: #aaa; margin-top: 3px; }
+    .optimal-row { font-size: 13px; color: #aaa; margin-top: 8px; }
+    #gameOver { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 100; animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .gameOverBox { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 40px 60px; border-radius: 20px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8); animation: slideUp 0.5s ease-out; max-width: 90%; max-height: 90vh; overflow-y: auto; }
+    @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .gameOverBox h1 { font-size: 52px; margin: 0; text-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+    .gameOverBox h2 { font-size: 44px; color: #ffeb3b; margin: 15px 0; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+    .gameOverBox p  { margin: 8px 0; font-size: 18px; color: #ddd; }
+    .gameOverBox .controls { margin-top: 25px; }
+    .star-rating { font-size: 48px; margin: 20px 0; }
+    .achievements-unlocked { margin-top: 20px; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 8px; border: 2px solid rgba(255,215,0,0.3); }
+    .achievement-item { display: flex; align-items: center; gap: 10px; margin: 8px 0; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 6px; animation: achievementPop 0.5s ease-out; }
+    @keyframes achievementPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+    .achievement-item .icon { font-size: 24px; }
+    .achievement-item .text { text-align: left; flex: 1; }
+    .achievement-item .title { font-weight: bold; color: #FFD700; }
+    .achievement-item .desc { font-size: 12px; color: #aaa; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; }
+    .stat-card { background: rgba(0,0,0,0.3); padding: 25px; border-radius: 12px; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.1); }
+    .stat-card-icon { font-size: 48px; margin-bottom: 10px; }
+    .stat-card-value { font-size: 36px; font-weight: bold; color: #ffeb3b; margin: 10px 0; }
+    .stat-card-label { font-size: 14px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+    .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); transition: width 0.5s ease; }
+    .achievements-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 30px; }
+    .achievement-card { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
+    .achievement-card.unlocked { border-color: #FFD700; background: rgba(255,215,0,0.1); }
+    .achievement-card.locked { opacity: 0.5; }
+    .achievement-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .achievement-header { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+    .achievement-icon { font-size: 36px; }
+    .achievement-info { flex: 1; text-align: left; }
+    .achievement-name { font-weight: bold; font-size: 16px; color: #FFD700; }
+    .achievement-desc { font-size: 12px; color: #aaa; margin-top: 5px; }
+    .theme-selector { display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; }
+    .theme-btn { width: 35px; height: 35px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.3s ease; padding: 0; }
+    .theme-btn:hover { transform: scale(1.15); border-color: #fff; }
+    .theme-btn.active { border-color: #ffeb3b; box-shadow: 0 0 15px rgba(255,235,59,0.6); }
+    .theme-btn.dark   { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+    .theme-btn.light  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .theme-btn.nature { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%); }
+    .sound-toggle { background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-size: 24px; border: none; display: flex; align-items: center; justify-content: center; }
+    .sound-toggle:hover { background: rgba(0,0,0,0.5); }
+    @keyframes confetti-fall { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+    .confetti { position: fixed; width: 10px; height: 10px; z-index: 1000; pointer-events: none; animation: confetti-fall 3s linear; }
+    .chaos-warning { animation: chaos-warning-pulse 0.25s ease-in-out 2; position: relative; z-index: 10; }
+    @keyframes chaos-warning-pulse { 0%, 100% { background: #ff5252 !important; box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7); transform: scale(1); } 50% { background: #ff1744 !important; box-shadow: 0 0 0 15px rgba(255, 82, 82, 0); transform: scale(1.1); } }
+    .chaos-warning::before { content: '⚠️'; position: absolute; font-size: 24px; animation: warning-bounce 0.25s ease-in-out infinite; z-index: 20; pointer-events: none; }
+    @keyframes warning-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes chaos-collapse { 0% { background: #ff5252; transform: scale(1); } 50% { background: #ff1744; transform: scale(1.2); box-shadow: 0 0 20px #ff5252; } 100% { background: #1a0f0a; transform: scale(1); } }
+    .chaos-collapsing { animation: chaos-collapse 0.3s ease-out; }
+    @keyframes border-warning { 0%, 100% { box-shadow: 0 0 0 0 rgba(94, 53, 177, 0.7); transform: scale(1); } 50% { box-shadow: 0 0 0 15px rgba(94, 53, 177, 0); transform: scale(1.05); } }
+    .border-warning { animation: border-warning 0.5s ease-in-out 3; position: relative; z-index: 10; }
+    @keyframes border-collapse { 0% { background: #5E35B1; transform: scale(1); } 50% { background: #7E57C2; transform: scale(1.15); box-shadow: 0 0 20px #5E35B1; } 100% { background: #1a0f0a; transform: scale(1); } }
+    .border-collapsing { animation: border-collapse 0.4s ease-out; }
+    #tutorialMessage { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 60px; border-radius: 20px; font-size: 32px; font-weight: bold; color: white; text-shadow: 0 4px 8px rgba(0,0,0,0.5); box-shadow: 0 0 50px rgba(0,0,0,0.8); z-index: 1000; display: none; animation: tutorialFadeIn 0.5s ease-out; text-align: center; }
+    @keyframes tutorialFadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    @keyframes tutorialFadeOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } }
+    #tutorialMessage.fade-out { animation: tutorialFadeOut 0.5s ease-out forwards; }
+    .portal-A { background: radial-gradient(circle, #00e5ff 0%, #0077aa 60%, #003d5c 100%) !important; }
+    .portal-B { background: radial-gradient(circle, #ea00ff 0%, #8800aa 60%, #44005c 100%) !important; }
+    .portal-C { background: radial-gradient(circle, #ff9100 0%, #cc5500 60%, #7a2200 100%) !important; }
+    .portal-D { background: radial-gradient(circle, #00ff88 0%, #00aa44 60%, #005c22 100%) !important; }
+    .portal-E { background: radial-gradient(circle, #ffee00 0%, #aaaa00 60%, #5c5c00 100%) !important; }
+    .portal-A, .portal-B, .portal-C, .portal-D, .portal-E { animation: portal-pulse 1.2s ease-in-out infinite; cursor: pointer; }
+    @keyframes portal-pulse { 0%, 100% { box-shadow: 0 0 8px 2px rgba(255,255,255,0.4), inset 0 0 8px rgba(255,255,255,0.2); transform: scale(1); } 50% { box-shadow: 0 0 18px 6px rgba(255,255,255,0.7), inset 0 0 14px rgba(255,255,255,0.4); transform: scale(1.06); } }
+    @keyframes teleport-flash { 0% { background: #fff !important; transform: scale(1.3); } 40% { background: #00e5ff !important; transform: scale(1.15); } 100% { transform: scale(1); } }
+    .teleporting { animation: teleport-flash 0.35s ease-out forwards !important; }
+    .levelBtn.teleport { background: linear-gradient(135deg, #00bcd4 0%, #006064 100%); }
+    .levelBtn.teleport.completed { background: linear-gradient(135deg, #00e5ff 0%, #0097a7 100%); }
+@media (max-width: 700px) {
+    body {padding: 0; margin: 0;}
+    #container {padding: 0; max-width: 100%; min-height: 100vh;}
+    .header {padding: 6px 8px; gap: 6px; border-radius: 8px;}
+    .header h2 {font-size: 14px;}
+    .stats {gap: 15px; margin-top: 8px;}
+    .stat-value {font-size: 20px;}
+    .stat-label {font-size: 9px; letter-spacing: 0.5px;}
+    button {padding: 8px 14px; font-size: 13px; min-height: 36px;}
+    .controls {gap: 6px;margin-top: 10px;}
+    #board { display: grid !important; gap: 0px; padding: 0px; border: 2px solid #654321; border-radius: 6px; background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.5); margin-left: auto; margin-right: auto; }
+    #board::before {border: 2px solid #8B7355;inset: -6px;}
+    .cell {font-size: 22px; border: none;}
+    .knight img {width: 75% !important;height: 75% !important;}
+    .target::after {font-size: 24px;}
+    .blocked.solo::before {font-size: 20px;}
+    .puzzle-info { padding: 0px; margin-top: 8px; border-radius: 6px; }
+    .level-number { font-size: 12px; margin-bottom: 6px; letter-spacing: 1px; }
+    .moves-counter { font-size: 36px; margin-top: 4px; }
+    .moves-label { font-size: 9px; margin-top: 2px; }
+    .optimal-row { font-size: 11px; margin-top: 5px; }
+    #timerContainer { padding: 8px; margin-top: 8px; border-radius: 6px; }
+    #timerContainer p { margin: 0 0 3px 0; font-size: 10px; }
+    #timer { font-size: 32px; }
+    .sound-toggle { padding: 6px 10px; font-size: 20px; }
+    #modeSelection h1 { font-size: 32px; margin: 0px 0; padding-top: 15px; }
+    .flag-btn svg { width: 42px; height: 28px; }
+    .theme-btn { width: 28px; height: 28px; }
+    .modeBtn { padding: 14px 18px; font-size: 16px; }
+    .modeBtn small { font-size: 12px !important; }
+    #viewStatsMainBtn { padding: 12px 30px !important; font-size: 16px !important; }
+    .levelBtn { padding: 14px; font-size: 16px; }
+    .stars { font-size: 14px; margin-top: 4px; }
+    .level-badge { font-size: 11px; padding: 2px 5px; }
+    .gameOverBox { padding: 30px 40px; max-width: 95%; }
+    .gameOverBox h1 { font-size: 40px; }
+    .gameOverBox h2 { font-size: 36px; }
+    .gameOverBox p { font-size: 15px; }
+    .star-rating { font-size: 40px; margin: 18px 0; }
+}
+@media (max-width: 400px) {
+    #board { padding: 6px; gap: 1px; }
+    #modeSelection h1 { font-size: 24px; }
+    button { padding: 6px 12px; font-size: 12px; }
+}
+    .flag-btn { background: none; border: none; cursor: pointer; padding: 4px; transition: transform 0.2s, filter 0.2s; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .flag-btn:hover { transform: scale(1.15) translateY(-2px); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+    .flag-btn.active-lang svg { outline: 3px solid #ffeb3b; outline-offset: 2px; border-radius: 5px; filter: drop-shadow(0 0 8px rgba(255,235,59,0.8)); }
+  </style>
+</head>
+<body class="dark-theme">
+
+<div id="tutorialMessage"></div>
+<div id="container">
+  <div id="modeSelection">
+    <h1>♟️ CHESSMANIA</h1>
+    <div style="display:flex; justify-content:center; align-items:center; gap:18px; margin:20px 0;">
+      <button class="flag-btn" onclick="changeLanguage('en')" id="flagEN" title="English">
+        <svg id="svgEN" width="56" height="37" viewBox="0 0 60 40" style="border-radius:5px;box-shadow:0 3px 12px rgba(0,0,0,0.5);display:block;">
+          <defs><clipPath id="ukc"><rect width="60" height="40" rx="5"/></clipPath></defs>
+          <g clip-path="url(#ukc)">
+            <rect width="60" height="40" fill="#012169"/>
+            <line x1="0" y1="0" x2="60" y2="40" stroke="#fff" stroke-width="8"/>
+            <line x1="60" y1="0" x2="0" y2="40" stroke="#fff" stroke-width="8"/>
+            <polygon points="0,0 33.3,20 26.7,20 0,2.67" fill="#C8102E"/>
+            <polygon points="60,40 26.7,20 33.3,20 60,37.33" fill="#C8102E"/>
+            <polygon points="60,0 33.3,20 26.7,20 60,2.67" fill="#C8102E"/>
+            <polygon points="0,40 26.7,20 33.3,20 0,37.33" fill="#C8102E"/>
+            <rect x="24" y="0" width="12" height="40" fill="#fff"/>
+            <rect x="0" y="14" width="60" height="12" fill="#fff"/>
+            <rect x="26" y="0" width="8" height="40" fill="#C8102E"/>
+            <rect x="0" y="16" width="60" height="8" fill="#C8102E"/>
+          </g>
+        </svg>
+      </button>
+      <button class="flag-btn active-lang" onclick="changeLanguage('tr')" id="flagTR" title="Türkçe">
+        <svg id="svgTR" width="56" height="37" viewBox="0 0 60 40" style="border-radius:5px;box-shadow:0 3px 12px rgba(0,0,0,0.5);display:block;">
+          <defs><clipPath id="trc"><rect width="60" height="40" rx="5"/></clipPath></defs>
+          <g clip-path="url(#trc)">
+            <rect width="60" height="40" fill="#E30A17"/>
+            <circle cx="20" cy="20" r="10.5" fill="#fff"/>
+            <circle cx="23" cy="20" r="8.2" fill="#E30A17"/>
+            <polygon points="31,13.2 32.9,18.9 38.9,18.9 34.1,22.4 35.9,28.1 31,24.6 26.1,28.1 27.9,22.4 23.1,18.9 29.1,18.9" fill="#fff"/>
+          </g>
+        </svg>
+      </button>
+      <button class="flag-btn" onclick="changeLanguage('es')" id="flagES" title="Español">
+        <svg id="svgES" width="56" height="37" viewBox="0 0 60 40" style="border-radius:5px;box-shadow:0 3px 12px rgba(0,0,0,0.5);display:block;">
+          <defs>
+            <clipPath id="esc"><rect width="60" height="40" rx="5"/></clipPath>
+            <linearGradient id="esy" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#F1BF00"/>
+              <stop offset="100%" stop-color="#D9A800"/>
+            </linearGradient>
+          </defs>
+          <g clip-path="url(#esc)">
+            <rect width="60" height="10" fill="#AA151B"/>
+            <rect y="10" width="60" height="20" fill="url(#esy)"/>
+            <rect y="30" width="60" height="10" fill="#AA151B"/>
+            <rect x="13" y="14" width="2.5" height="12" rx="1.2" fill="#9B1C1C"/>
+            <rect x="12" y="13.5" width="4.5" height="1.8" rx="0.8" fill="#9B1C1C"/>
+            <rect x="12" y="25.5" width="4.5" height="1.5" rx="0.6" fill="#9B1C1C"/>
+            <rect x="21.5" y="14" width="2.5" height="12" rx="1.2" fill="#9B1C1C"/>
+            <rect x="20.5" y="13.5" width="4.5" height="1.8" rx="0.8" fill="#9B1C1C"/>
+            <rect x="20.5" y="25.5" width="4.5" height="1.5" rx="0.6" fill="#9B1C1C"/>
+            <polygon points="13,13.5 14.25,11 15.5,12.2 16.75,11 18,13.5" fill="#C8A000"/>
+            <rect x="13.3" y="13" width="4.4" height="1.2" rx="0.4" fill="#C8A000"/>
+            <polygon points="21.5,13.5 22.75,11 24,12.2 25.25,11 26.5,13.5" fill="#C8A000"/>
+            <rect x="21.8" y="13" width="4.4" height="1.2" rx="0.4" fill="#C8A000"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+    <div class="theme-selector" style="justify-content:center; margin:20px 0;">
+      <span id="themeLabel" style="font-size:14px; margin-right:10px;">Tema:</span>
+      <button class="theme-btn dark active" onclick="changeTheme('dark')" id="themeDark"></button>
+      <button class="theme-btn light" onclick="changeTheme('light')" id="themeLight"></button>
+      <button class="theme-btn nature" onclick="changeTheme('nature')" id="themeNature"></button>
+    </div>
+    <div style="text-align: center; margin: 30px 0 20px 0;">
+      <button onclick="showStatsScreen()" style="background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); padding: 15px 40px; font-size: 18px; border-radius: 12px; border: none; color: white; cursor: pointer; box-shadow: 0 6px 20px rgba(0,188,212,0.4); transition: all 0.3s ease; font-weight: bold;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)'" onmouseout="this.style.transform='translateY(0) scale(1)'" id="viewStatsMainBtn">📊 İstatistiklerim & Başarımlar</button>
+    </div>
+    <div class="modeButtons">
+      <button class="modeBtn easyBtn" onclick="startGame('easy')" id="modeEasy">😊 Kolay Mod<br><small style="font-size:14px;">(6x6 Tahta)</small></button>
+      <button class="modeBtn classicBtn" onclick="startGame('classic')" id="modeClassic">🎮 Klasik Mod<br><small style="font-size:14px;">(Süresiz)</small></button>
+      <button class="modeBtn hardBtn" onclick="startGame('hard')" id="modeHard">⚡ Zor Mod<br><small style="font-size:14px;">(3 saniye)</small></button>
+      <button class="modeBtn expertBtn" onclick="startGame('expert')" id="modeExpert">🔥 Uzman Mod<br><small style="font-size:14px;">(10x10 Tahta)</small></button>
+      <button class="modeBtn puzzleBtn" onclick="showPuzzleSelection()" id="modePuzzle">🧩 Puzzle Modu<br><small style="font-size:14px;">(80 Seviye!)</small></button>
+    </div>
+  </div>
+  <div id="puzzleSelection">
+    <h1 id="puzzleLevelsTitle">🧩 Puzzle Seviyeleri</h1>
+    <p id="puzzleDesc2Text">Şövalyeyi başlangıçtan hedefe götürün!</p>
+    <div class="puzzleLevels" id="puzzleLevels"></div>
+    <div class="controls" style="margin-top:30px;"><button onclick="backToMainMenu()" id="backToMainBtn">⬅️ Ana Menü</button></div>
+  </div>
+  <div id="statsScreen">
+    <h1 id="statsTitle">📊 İstatistiklerim</h1>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-card-icon">⭐</div><div class="stat-card-value" id="totalStars">0</div><div class="stat-card-label" id="totalStarsLbl">Toplam Yıldız</div><div class="progress-bar"><div class="progress-fill" id="starsProgress" style="width: 0%"></div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">✅</div><div class="stat-card-value" id="completedLevels">0</div><div class="stat-card-label" id="completedLevelsLbl">Tamamlanan Seviye</div><div class="progress-bar"><div class="progress-fill" id="levelsProgress" style="width: 0%"></div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">👑</div><div class="stat-card-value" id="perfectLevels">0</div><div class="stat-card-label" id="perfectLevelsLbl">Mükemmel (3⭐)</div></div>
+      <div class="stat-card"><div class="stat-card-icon">🎯</div><div class="stat-card-value" id="successRate">0%</div><div class="stat-card-label" id="successRateLbl">Başarı Oranı</div></div>
+    </div>
+    <h2 id="achievementsTitle" style="margin-top: 40px;">🏆 Başarımlar</h2>
+    <div class="achievements-list" id="achievementsList"></div>
+    <div class="controls" style="margin-top:30px;"><button onclick="backToMainMenu()" id="backToMainBtn2">⬅️ Ana Menü</button></div>
+  </div>
+  <div id="gameScreen">
+    <div class="header">
+      <div><h2 style="margin:0;">♟️ CHESSMANIA <span id="modeLabel"></span></h2></div>
+      <div style="display:flex;gap:10px;align-items:center;"><button class="sound-toggle" onclick="toggleSound()"><span id="soundIcon">🔊</span></button></div>
+    </div>
+    <div class="stats" style="justify-content:center; margin-top:15px;">
+      <div class="stat-item"><div class="stat-label" id="scoreLbl">Skor</div><div class="stat-value" id="score">0</div></div>
+      <div class="stat-item"><div class="stat-label" id="highScoreLbl">En Yüksek</div><div class="stat-value record" id="highScore">0</div></div>
+    </div>
+    <div class="puzzle-info" id="puzzleInfo">
+      <div class="level-number" id="levelNumber">Seviye 1</div>
+      <div class="moves-counter" id="movesCount">0</div>
+      <div class="moves-label" id="movesWordLbl">Hamle</div>
+      <div class="optimal-row"><span id="optimalLbl">Optimal</span>: <span id="targetMoves">?</span></div>
+    </div>
+    <div id="timerContainer"><p id="timerLbl" style="margin:0 0 5px 0;">Kalan Süre:</p><div id="timer">3</div></div>
+    <div class="controls">
+      <button onclick="backToMenu()" id="mainMenuBtn">⬅️ Ana Menü</button>
+      <button onclick="restartGame()" id="newGameBtn" class="success">🔄 Yeni Oyun</button>
+      <button onclick="undoMove()" id="undoBtn" class="danger" style="display:none;">↩️ Geri Al</button>
+    </div>
+    <div id="board"></div>
+  </div>
+</div>
+<div id="gameOver">
+  <div class="gameOverBox">
+    <h1 id="gameOverMessage">MALSIN!</h1>
+    <div class="star-rating" id="starRating" style="display:none;"></div>
+    <p id="gameOverReason" style="font-size:16px; margin-top:10px;"></p>
+    <p id="finalScoreLbl" style="margin-top:20px;">Final Skor</p>
+    <h2 id="finalScore">0</h2>
+    <p id="newRecordMsg" style="color:#4caf50;font-weight:bold;font-size:20px;display:none;">🎉 YENİ REKOR! 🎉</p>
+    <div id="achievementsUnlocked" class="achievements-unlocked" style="display:none;">
+      <h3 style="color:#FFD700; margin-top:0;">🎉 Yeni Başarımlar!</h3>
+      <div id="unlockedAchievementsList"></div>
+    </div>
+    <div class="controls">
+      <button onclick="restartGame()" class="success" id="playAgainBtn">🔄 Tekrar Oyna</button>
+      <button onclick="backToMenu()" id="goMenuBtn">⬅️ Ana Menü</button>
+      <button onclick="nextPuzzle()" class="success" id="nextPuzzleBtn" style="display:none;">➡️ Sonraki Seviye</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── VERİ DEĞİŞKENLERİ (JSON'dan doldurulur) ────────────────────────────────
+let allPuzzleLevels = [];
+let translations   = {};
+let achievementMeta = {};  // JSON'dan gelen icon + eşik bilgisi
+let achievementDefs = {};  // check() fonksiyonları buraya eklenir
+
+// ─── OYUN DEĞİŞKENLERİ ───────────────────────────────────────────────────────
+const boardEl = document.getElementById("board");
+const scoreEl = document.getElementById("score");
+const highScoreEl = document.getElementById("highScore");
+const timerEl = document.getElementById("timer");
+const timerContainer = document.getElementById("timerContainer");
+
+let SIZE=8, board, knight, score, gameMode='classic';
+let timerInterval=null, remainingTime=3, soundEnabled=true;
+let currentTheme='dark', currentLanguage='tr';
+let isPuzzleMode=false, currentPuzzleLevel=0, targetCell=null;
+let moveHistory=[], puzzleProgress={}, blockedCells=[];
+let achievements={}, newlyUnlocked=[];
+let isWaitingForChaos=false, hasBorderCollapse=false, borderCollapseTriggered=false;
+let currentTimeLimit=0, chaosSequenceIndex=0, currentTeleports=[];
+
+// ─── ACHIEVEMENT CHECK FONKSİYONLARINI OLUŞTUR ───────────────────────────────
+function buildAchievementDefs() {
+  achievementDefs = {};
+  for (const [key, meta] of Object.entries(achievementMeta)) {
+    if (meta.starThreshold !== undefined) {
+      const threshold = meta.starThreshold;
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        let s = 0;
+        for (let i = 0; i < 80; i++) { if (puzzleProgress[i]) s += puzzleProgress[i]; }
+        return s >= threshold;
+      }};
+    } else if (meta.completeLevelRange) {
+      const [from, to] = meta.completeLevelRange;
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        for (let i = from; i <= to; i++) { if (!puzzleProgress[i]) return false; }
+        return true;
+      }};
+    } else if (meta.perfectLevelRange) {
+      const [from, to] = meta.perfectLevelRange;
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        for (let i = from; i <= to; i++) { if (puzzleProgress[i] !== 3) return false; }
+        return true;
+      }};
+    } else if (meta.perfectCount !== undefined) {
+      const count = meta.perfectCount;
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        let c = 0;
+        for (let i = 0; i < 80; i++) { if (puzzleProgress[i] === 3) c++; }
+        return c >= count;
+      }};
+    } else if (meta.timedPerfectCount !== undefined) {
+      const count = meta.timedPerfectCount;
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        let c = 0;
+        for (let i = 0; i < allPuzzleLevels.length; i++) {
+          if (allPuzzleLevels[i].timeLimit && puzzleProgress[i] === 3) c++;
+        }
+        return c >= count;
+      }};
+    }
+  }
+}
+
+// ─── JSON YÜKLEYICI ───────────────────────────────────────────────────────────
+async function loadGameData() {
+  try {
+    const [levelsRes, transRes, achRes] = await Promise.all([
+      fetch('levels.json'),
+      fetch('translations.json'),
+      fetch('achievements.json')
+    ]);
+    allPuzzleLevels = await levelsRes.json();
+    translations    = await transRes.json();
+    achievementMeta = await achRes.json();
+    buildAchievementDefs();
+  } catch(e) {
+    console.error('JSON yükleme hatası:', e);
+    alert('Veri dosyaları yüklenemedi. Dosyaların aynı klasörde olduğundan emin olun.');
+  }
+}
+
+// ─── SES MOTORu ──────────────────────────────────────────────────────────────
+class SoundEngine {
+  constructor(){this.ctx=new(window.AudioContext||window.webkitAudioContext)();}
+  playTone(freq,dur,type='sine'){if(!soundEnabled)return;const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.connect(g);g.connect(this.ctx.destination);o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(0.3,this.ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,this.ctx.currentTime+dur);o.start(this.ctx.currentTime);o.stop(this.ctx.currentTime+dur);}
+  playMove(){this.playTone(523.25,0.1,'square');}
+  playCollapse(){this.playTone(196,0.15,'sawtooth');}
+  playBorderCollapse(){this.playTone(330,0.2,'triangle');}
+  playGameOver(){setTimeout(()=>this.playTone(392,0.2,'triangle'),0);setTimeout(()=>this.playTone(349.23,0.2,'triangle'),100);setTimeout(()=>this.playTone(293.66,0.4,'triangle'),200);}
+  playSuccess(){setTimeout(()=>this.playTone(523.25,0.1,'sine'),0);setTimeout(()=>this.playTone(659.25,0.1,'sine'),100);setTimeout(()=>this.playTone(783.99,0.2,'sine'),200);}
+  playPuzzleComplete(){setTimeout(()=>this.playTone(523.25,0.15,'sine'),0);setTimeout(()=>this.playTone(659.25,0.15,'sine'),150);setTimeout(()=>this.playTone(783.99,0.15,'sine'),300);setTimeout(()=>this.playTone(1046.50,0.3,'sine'),450);}
+  playAchievement(){setTimeout(()=>this.playTone(659.25,0.1,'sine'),0);setTimeout(()=>this.playTone(783.99,0.1,'sine'),50);setTimeout(()=>this.playTone(1046.50,0.15,'sine'),100);}
+}
+const sound = new SoundEngine();
+
+// ─── YARDIMCI FONKSİYONLAR ───────────────────────────────────────────────────
+function showTutorialMessage(message){const el=document.getElementById("tutorialMessage");el.textContent=message;el.style.display="block";el.classList.remove("fade-out");setTimeout(()=>{el.classList.add("fade-out");setTimeout(()=>{el.style.display="none";},500);},3500);}
+function loadPuzzleProgress(){const s=localStorage.getItem('knightPuzzleProgress');puzzleProgress=s?JSON.parse(s):{};}
+function savePuzzleProgress(level,stars){if(!puzzleProgress[level]||puzzleProgress[level]<stars){puzzleProgress[level]=stars;localStorage.setItem('knightPuzzleProgress',JSON.stringify(puzzleProgress));}}
+function loadAchievements(){const s=localStorage.getItem('knightAchievements');achievements=s?JSON.parse(s):{};}
+function saveAchievements(){localStorage.setItem('knightAchievements',JSON.stringify(achievements));}
+function checkAchievements(){newlyUnlocked=[];for(const[key,def]of Object.entries(achievementDefs)){if(!achievements[key]&&def.check()){achievements[key]=true;newlyUnlocked.push(key);sound.playAchievement();}}saveAchievements();}
+function showAchievementsInGameOver(){if(newlyUnlocked.length===0){document.getElementById("achievementsUnlocked").style.display="none";return;}const t=translations[currentLanguage];const container=document.getElementById("unlockedAchievementsList");container.innerHTML="";newlyUnlocked.forEach(key=>{const def=achievementDefs[key];const ach=t.achievements[key];const item=document.createElement("div");item.className="achievement-item";item.innerHTML=`<div class="icon">${def.icon}</div><div class="text"><div class="title">${ach.name}</div><div class="desc">${ach.desc}</div></div>`;container.appendChild(item);});document.getElementById("achievementsUnlocked").style.display="block";}
+function createConfetti(){const colors=['#FFD700','#FF6B6B','#4ECDC4','#45B7D1','#FFA07A','#98D8C8'];for(let i=0;i<50;i++){setTimeout(()=>{const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=colors[Math.floor(Math.random()*colors.length)];c.style.animationDuration=(Math.random()*2+2)+'s';c.style.animationDelay=(Math.random()*0.5)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000);},i*30);}}
+
+function showStatsScreen(){const t=translations[currentLanguage];let ts=0,cl=0,pl=0;for(let i=0;i<80;i++){const s=puzzleProgress[i]||0;if(s>0)cl++;if(s===3)pl++;ts+=s;}const sr=cl>0?Math.round((ts/(cl*3))*100):0;document.getElementById("modeSelection").style.display="none";document.getElementById("puzzleSelection").style.display="none";document.getElementById("gameScreen").style.display="none";document.getElementById("statsScreen").style.display="block";document.getElementById("totalStars").textContent=ts;document.getElementById("completedLevels").textContent=cl;document.getElementById("perfectLevels").textContent=pl;document.getElementById("successRate").textContent=sr+"%";document.getElementById("starsProgress").style.width=(ts/240*100)+"%";document.getElementById("levelsProgress").style.width=(cl/80*100)+"%";updateUI();renderAchievements();document.getElementById("statsTitle").textContent=t.statsTitle;document.getElementById("totalStarsLbl").textContent=t.totalStarsLbl;document.getElementById("completedLevelsLbl").textContent=t.completedLevelsLbl;document.getElementById("perfectLevelsLbl").textContent=t.perfectLevelsLbl;document.getElementById("successRateLbl").textContent=t.successRateLbl;document.getElementById("achievementsTitle").textContent=t.achievementsTitle;}
+function renderAchievements(){const t=translations[currentLanguage];const container=document.getElementById("achievementsList");container.innerHTML="";for(const[key,def]of Object.entries(achievementDefs)){const ach=t.achievements[key];const unlocked=achievements[key]||false;const card=document.createElement("div");card.className="achievement-card "+(unlocked?"unlocked":"locked");card.innerHTML=`<div class="achievement-header"><div class="achievement-icon">${def.icon}</div><div class="achievement-info"><div class="achievement-name">${ach.name}</div><div class="achievement-desc">${ach.desc}</div></div></div>`;container.appendChild(card);}}
+function showPuzzleSelection(){loadPuzzleProgress();document.getElementById("modeSelection").style.display="none";document.getElementById("statsScreen").style.display="none";document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}
+
+function renderPuzzleLevels(){
+  const container=document.getElementById("puzzleLevels");
+  container.innerHTML="";
+  const t=translations[currentLanguage];
+  allPuzzleLevels.forEach((puzzle,index)=>{
+    const btn=document.createElement("button");
+    btn.className="levelBtn";
+    const stars=puzzleProgress[index]||0;
+    const isLocked=index>0&&!puzzleProgress[index-1];
+    const hasWalls=puzzle.blocked&&puzzle.blocked.length>0;
+    const isChaos=puzzle.chaos||puzzle.chaosSequence||false;
+    const isBorder=puzzle.borderCollapse||false;
+    const isTeleport=puzzle.teleports&&puzzle.teleports.length>0;
+    const isTimed=puzzle.timeLimit>0;
+    const name=t.levelNames[index];
+    let categoryClass="",badge="";
+    if(isTimed){categoryClass="timed";const perMove=puzzle.timeLimitPerMove?'/h':'';badge=`<span class="level-badge">⏱️${puzzle.timeLimit}s${perMove}</span>`;}
+    else if(isTeleport&&isChaos&&isBorder){categoryClass="ultimate";badge=`<span class="level-badge">🌀💀</span>`;}
+    else if(isTeleport&&isChaos){categoryClass="teleport";badge=`<span class="level-badge">🌀🌪️</span>`;}
+    else if(isTeleport&&hasWalls){categoryClass="teleport";badge=`<span class="level-badge">🌀🧱</span>`;}
+    else if(isTeleport){categoryClass="teleport";badge=`<span class="level-badge">🌀</span>`;}
+    else if(hasWalls&&isChaos&&isBorder){categoryClass="ultimate";badge=`<span class="level-badge">💀</span>`;}
+    else if(isChaos&&isBorder){categoryClass="chaos";badge=`<span class="level-badge">🔥</span>`;}
+    else if(hasWalls&&isBorder){categoryClass="extreme";badge=`<span class="level-badge">🧱🔲</span>`;}
+    else if(hasWalls&&isChaos){categoryClass="chaos";badge=`<span class="level-badge">🧱🌪️</span>`;}
+    else if(isBorder){categoryClass="border";badge=`<span class="level-badge">🔲</span>`;}
+    else if(isChaos){categoryClass="chaos";badge=`<span class="level-badge">🌪️</span>`;}
+    else if(hasWalls){categoryClass="extreme";badge=`<span class="level-badge">🧱</span>`;}
+    if(isLocked){btn.classList.add("locked");btn.disabled=true;btn.innerHTML=`${t.level} ${index+1}<br><small>${t.locked}</small>`;}
+    else{if(categoryClass)btn.classList.add(categoryClass);if(stars>0)btn.classList.add("completed");const starDisplay=stars>0?`<div class="stars">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>`:'';btn.innerHTML=`${badge}${t.level} ${index+1}<br><small>${name}</small>${starDisplay}`;btn.onclick=()=>startPuzzle(index);}
+    container.appendChild(btn);
+  });
+}
+
+function startPuzzle(levelIndex){
+  currentPuzzleLevel=levelIndex;isPuzzleMode=true;gameMode='puzzle';
+  const puzzle=allPuzzleLevels[levelIndex];
+  SIZE=puzzle.size;targetCell=puzzle.target;blockedCells=puzzle.blocked||[];
+  currentTeleports=puzzle.teleports||[];currentTimeLimit=puzzle.timeLimit||0;
+  hasBorderCollapse=puzzle.borderCollapse||false;borderCollapseTriggered=false;
+  isWaitingForChaos=false;chaosSequenceIndex=0;
+  document.getElementById("puzzleSelection").style.display="none";
+  document.getElementById("statsScreen").style.display="none";
+  document.getElementById("gameScreen").style.display="block";
+  document.getElementById("puzzleInfo").classList.add("active");
+  document.getElementById("undoBtn").style.display=levelIndex<10?"inline-block":"none";
+  timerContainer.style.display=currentTimeLimit>0?'block':'none';
+  updateUI();restartPuzzle();
+  if(levelIndex===0){const t=translations[currentLanguage];setTimeout(()=>{showTutorialMessage(t.tutorialMessage);},500);}
+}
+
+function restartPuzzle(){
+  const puzzle=allPuzzleLevels[currentPuzzleLevel];
+  board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));
+  blockedCells.forEach(c=>{board[c.y][c.x]=-1;});
+  knight={x:puzzle.start.x,y:puzzle.start.y};board[knight.y][knight.x]=1;
+  moveHistory=[];score=0;currentTeleports=puzzle.teleports||[];
+  currentTimeLimit=puzzle.timeLimit||0;hasBorderCollapse=puzzle.borderCollapse||false;
+  borderCollapseTriggered=false;isWaitingForChaos=false;chaosSequenceIndex=0;
+  updatePuzzleInfoDisplay();document.getElementById("gameOver").style.display="none";
+  if(currentTimeLimit>0)startTimer();draw();
+}
+
+function updatePuzzleInfoDisplay(){const t=translations[currentLanguage];const puzzle=allPuzzleLevels[currentPuzzleLevel];const name=t.levelNames[currentPuzzleLevel];document.getElementById("levelNumber").textContent=`${t.level} ${currentPuzzleLevel+1} — ${name}`;document.getElementById("movesCount").textContent=moveHistory.length;document.getElementById("movesWordLbl").textContent=t.movesWord;document.getElementById("optimalLbl").textContent=t.optimal;document.getElementById("targetMoves").textContent=puzzle.optimal;}
+function undoMove(){if(moveHistory.length===0||currentPuzzleLevel>=10||isWaitingForChaos)return;const last=moveHistory.pop();board[knight.y][knight.x]=0;knight=last;board[knight.y][knight.x]=1;score=Math.max(0,score-1);document.getElementById("movesCount").textContent=moveHistory.length;draw();}
+function nextPuzzle(){if(currentPuzzleLevel<allPuzzleLevels.length-1)startPuzzle(currentPuzzleLevel+1);else backToMenu();}
+
+function changeLanguage(lang){
+  currentLanguage=lang;localStorage.setItem('knightLanguage',lang);
+  ['EN','TR','ES'].forEach(code=>{const btn=document.getElementById('flag'+code);if(btn){if(code===lang.toUpperCase())btn.classList.add('active-lang');else btn.classList.remove('active-lang');}});
+  updateUI();
+  if(document.getElementById("puzzleSelection").style.display==="block")renderPuzzleLevels();
+  if(document.getElementById("statsScreen").style.display==="block"){renderAchievements();const t=translations[currentLanguage];document.getElementById("statsTitle").textContent=t.statsTitle;document.getElementById("totalStarsLbl").textContent=t.totalStarsLbl;document.getElementById("completedLevelsLbl").textContent=t.completedLevelsLbl;document.getElementById("perfectLevelsLbl").textContent=t.perfectLevelsLbl;document.getElementById("successRateLbl").textContent=t.successRateLbl;document.getElementById("achievementsTitle").textContent=t.achievementsTitle;}
+}
+
+function updateUI(){const t=translations[currentLanguage];document.querySelector('#modeSelection h1').textContent='♟️ '+t.title;document.getElementById('themeLabel').textContent=t.theme;document.getElementById('themeDark').title=t.darkTheme;document.getElementById('themeLight').title=t.lightTheme;document.getElementById('themeNature').title=t.natureTheme;document.getElementById('modeEasy').innerHTML=`${t.easyMode}<br><small style="font-size:14px;">${t.easyDesc}</small>`;document.getElementById('modeClassic').innerHTML=`${t.classicMode}<br><small style="font-size:14px;">${t.classicDesc}</small>`;document.getElementById('modeHard').innerHTML=`${t.hardMode}<br><small style="font-size:14px;">${t.hardDesc}</small>`;document.getElementById('modeExpert').innerHTML=`${t.expertMode}<br><small style="font-size:14px;">${t.expertDesc}</small>`;document.getElementById('modePuzzle').innerHTML=`${t.puzzleMode}<br><small style="font-size:14px;">${t.puzzleDesc}</small>`;document.getElementById('viewStatsMainBtn').textContent=t.viewStatsMain;document.getElementById('puzzleLevelsTitle').textContent=t.puzzleLevels;document.getElementById('puzzleDesc2Text').textContent=t.puzzleDesc2;document.getElementById('backToMainBtn').textContent=t.mainMenu;document.getElementById('backToMainBtn2').textContent=t.mainMenu;document.getElementById('mainMenuBtn').textContent=t.mainMenu;document.getElementById('newGameBtn').textContent=t.newGame;document.getElementById('undoBtn').textContent=t.undo;document.getElementById('scoreLbl').textContent=t.score;document.getElementById('highScoreLbl').textContent=t.highScore;document.getElementById('timerLbl').textContent=t.remainingTime;document.getElementById('playAgainBtn').textContent=t.playAgain;document.getElementById('goMenuBtn').textContent=t.mainMenu;document.getElementById('finalScoreLbl').textContent=t.finalScore;if(isPuzzleMode)updatePuzzleInfoDisplay();updateModeLabel();}
+function updateModeLabel(){const t=translations[currentLanguage];const el=document.getElementById("modeLabel");const map={easy:[t.easyLabel,'#8BC34A'],classic:[t.classicLabel,'#4CAF50'],hard:[t.hardLabel,'#ff5252'],expert:[t.expertLabel,'#9C27B0'],puzzle:[t.puzzleLabel,'#FFA726']};const[text,color]=map[gameMode]||['','#fff'];el.textContent=text;el.style.color=color;}
+function changeTheme(theme){currentTheme=theme;document.body.className=theme+'-theme';document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.theme-btn.'+theme).forEach(b=>b.classList.add('active'));localStorage.setItem('knightTheme',theme);}
+function toggleSound(){soundEnabled=!soundEnabled;document.getElementById('soundIcon').textContent=soundEnabled?'🔊':'🔇';localStorage.setItem('knightSound',soundEnabled);if(soundEnabled)sound.playTone(440,0.1);}
+function saveHighScore(mode,sc){const key='knightHighScore_'+mode;const cur=parseInt(localStorage.getItem(key)||'0');if(sc>cur){localStorage.setItem(key,sc);return true;}return false;}
+function loadHighScore(mode){return parseInt(localStorage.getItem('knightHighScore_'+mode)||'0');}
+function updateHighScoreDisplay(){highScoreEl.textContent=loadHighScore(gameMode);}
+function inside(x,y){return x>=0&&x<SIZE&&y>=0&&y<SIZE;}
+function isOnBorder(x,y){return x===0||x===SIZE-1||y===0||y===SIZE-1;}
+const knightOffsets=[{x:2,y:1},{x:1,y:2},{x:-1,y:2},{x:-2,y:1},{x:-2,y:-1},{x:-1,y:-2},{x:1,y:-2},{x:2,y:-1}];
+function getValidMoves(){return knightOffsets.map(m=>({x:knight.x+m.x,y:knight.y+m.y})).filter(p=>inside(p.x,p.y)&&board[p.y][p.x]===0);}
+
+function startTimer(){if(gameMode!=='hard'&&!currentTimeLimit)return;stopTimer();remainingTime=currentTimeLimit||3;timerEl.textContent=remainingTime;timerEl.classList.remove('warning');timerInterval=setInterval(()=>{remainingTime--;timerEl.textContent=remainingTime;if(remainingTime<=5)timerEl.classList.add('warning');if(remainingTime<=0){stopTimer();showGameOverMessage(translations[currentLanguage].timeUp);}},1000);}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}timerEl.classList.remove('warning');}
+function canReachTarget(){if(!targetCell)return true;const queue=[{x:knight.x,y:knight.y}];const visited=new Set();visited.add(`${knight.x},${knight.y}`);while(queue.length>0){const pos=queue.shift();if(pos.x===targetCell.x&&pos.y===targetCell.y)return true;knightOffsets.forEach(offset=>{const nx=pos.x+offset.x,ny=pos.y+offset.y,key=`${nx},${ny}`;if(inside(nx,ny)&&board[ny][nx]===0&&!visited.has(key)){visited.add(key);queue.push({x:nx,y:ny});}});}return false;}
+function willStillBeReachable(testX,testY){const original=board[testY][testX];board[testY][testX]=-1;const canReach=canReachTarget();board[testY][testX]=original;return canReach;}
+
+function collapseBorders(){
+  const borderCells=[];for(let y=0;y<SIZE;y++){for(let x=0;x<SIZE;x++){if(isOnBorder(x,y)&&board[y][x]===0)borderCells.push({x,y});}}
+  if(borderCells.length===0){isWaitingForChaos=false;draw();return;}
+  borderCells.forEach((cell,index)=>{const cellEl=boardEl.children[cell.y*SIZE+cell.x];if(cellEl)setTimeout(()=>cellEl.classList.add('border-warning'),index*20);});
+  setTimeout(()=>{borderCells.forEach((cell,index)=>{const cellEl=boardEl.children[cell.y*SIZE+cell.x];if(cellEl){setTimeout(()=>{cellEl.classList.remove('border-warning');cellEl.classList.add('border-collapsing');sound.playBorderCollapse();setTimeout(()=>{board[cell.y][cell.x]=-1;if(index===borderCells.length-1){isWaitingForChaos=false;draw();if(isOnBorder(knight.x,knight.y)){sound.playGameOver();showGameOverMessage(translations[currentLanguage].borderCrush);}else if(getValidMoves().length===0){sound.playGameOver();showGameOverMessage(translations[currentLanguage].noMovesLeft);}}},400);},index*30);}});},500);
+}
+
+function collapseSpecificCell(cell){
+  if(!cell||board[cell.y][cell.x]!==0){isWaitingForChaos=false;draw();return;}
+  const cellEl=boardEl.children[cell.y*SIZE+cell.x];
+  if(cellEl){cellEl.classList.add('chaos-warning');setTimeout(()=>{cellEl.classList.remove('chaos-warning');cellEl.classList.add('chaos-collapsing');sound.playTone(220,0.2,'sawtooth');setTimeout(()=>{board[cell.y][cell.x]=-1;isWaitingForChaos=false;draw();if(getValidMoves().length===0){sound.playGameOver();showGameOverMessage(translations[currentLanguage].noMovesLeft);}},300);},500);}else{isWaitingForChaos=false;draw();}
+}
+
+function collapseStrategicCell(){
+  const validMoves=getValidMoves();const candidates=[];
+  for(let y=0;y<SIZE;y++){for(let x=0;x<SIZE;x++){if(board[y][x]!==0)continue;if(x===knight.x&&y===knight.y)continue;if(targetCell&&x===targetCell.x&&y===targetCell.y)continue;if(validMoves.some(m=>m.x===x&&m.y===y))continue;if(!willStillBeReachable(x,y))continue;candidates.push({x,y,score:calculateStrategicScore(x,y)});}}
+  if(candidates.length===0){isWaitingForChaos=false;draw();return;}
+  candidates.sort((a,b)=>b.score-a.score);
+  const topCount=Math.max(1,Math.floor(candidates.length*0.3));
+  const chosen=candidates.slice(0,topCount)[Math.floor(Math.random()*topCount)];
+  const cellEl=boardEl.children[chosen.y*SIZE+chosen.x];
+  if(cellEl){cellEl.classList.add('chaos-warning');setTimeout(()=>{cellEl.classList.remove('chaos-warning');cellEl.classList.add('chaos-collapsing');sound.playTone(220,0.2,'sawtooth');setTimeout(()=>{board[chosen.y][chosen.x]=-1;isWaitingForChaos=false;draw();if(getValidMoves().length===0){sound.playGameOver();showGameOverMessage(translations[currentLanguage].noMovesLeft);}},300);},500);}
+}
+
+function calculateStrategicScore(x,y){let sc=0;if(targetCell){const d=Math.abs(x-targetCell.x)+Math.abs(y-targetCell.y);if(d>=3&&d<=5)sc+=50;else if(d>=2&&d<=6)sc+=30;}const kd=Math.abs(x-knight.x)+Math.abs(y-knight.y);if(kd>=3&&kd<=5)sc+=40;else if(kd>=2&&kd<=6)sc+=20;const isCorner=(x===0||x===SIZE-1)&&(y===0||y===SIZE-1);const isEdge=x===0||x===SIZE-1||y===0||y===SIZE-1;if(isCorner)sc+=35;else if(isEdge)sc+=25;const cx=SIZE/2,cy=SIZE/2;const dc=Math.sqrt(Math.pow(x-cx,2)+Math.pow(y-cy,2));const md=Math.sqrt(2)*SIZE/2;if(dc>md*0.3&&dc<md*0.7)sc+=30;if(targetCell&&isOnKnightPath(knight.x,knight.y,x,y,targetCell.x,targetCell.y))sc+=60;let cn=0;[{x:x+1,y},{x:x-1,y},{x,y:y+1},{x,y:y-1}].forEach(n=>{if(inside(n.x,n.y)&&board[n.y][n.x]===-1)cn++;});sc+=cn*15;sc+=Math.random()*20;return sc;}
+function isOnKnightPath(fx,fy,cx,cy,tx,ty){return knightOffsets.some(m=>fx+m.x===cx&&fy+m.y===cy)&&knightOffsets.some(m=>cx+m.x===tx&&cy+m.y===ty);}
+
+function getPortalAt(x,y){for(const tp of currentTeleports){if(tp.from.x===x&&tp.from.y===y)return{dest:tp.to,id:tp.id};if(tp.to.x===x&&tp.to.y===y)return{dest:tp.from,id:tp.id};}return null;}
+
+function doTeleport(destX,destY){
+  const destEl=boardEl.children[destY*SIZE+destX];
+  if(destEl){destEl.classList.add('teleporting');setTimeout(()=>destEl.classList.remove('teleporting'),350);}
+  sound.playTone(880,0.08,'sine');setTimeout(()=>sound.playTone(1100,0.08,'sine'),80);setTimeout(()=>sound.playTone(1400,0.12,'sine'),160);
+  board[knight.y][knight.x]=0;knight={x:destX,y:destY};board[destY][destX]=1;
+  setTimeout(()=>{isWaitingForChaos=false;draw();if(isPuzzleMode&&targetCell&&knight.x===targetCell.x&&knight.y===targetCell.y){sound.playPuzzleComplete();showPuzzleComplete();return;}if(getValidMoves().length===0){sound.playGameOver();showGameOverMessage(translations[currentLanguage].noMovesLeft);}},380);
+}
+
+function moveKnight(x,y){
+  if(isWaitingForChaos)return;
+  if(!isPuzzleMode){board[knight.y][knight.x]=-1;sound.playCollapse();}
+  else{board[knight.y][knight.x]=0;}
+  moveHistory.push({x:knight.x,y:knight.y});
+  sound.playMove();knight={x,y};board[y][x]=1;score++;scoreEl.textContent=score;
+  if(isPuzzleMode&&currentTeleports.length>0){const portal=getPortalAt(x,y);if(portal){document.getElementById("movesCount").textContent=moveHistory.length;isWaitingForChaos=true;draw();setTimeout(()=>doTeleport(portal.dest.x,portal.dest.y),200);return;}}
+  if(isPuzzleMode){
+    document.getElementById("movesCount").textContent=moveHistory.length;
+    const puzzle=allPuzzleLevels[currentPuzzleLevel];
+    if(currentTimeLimit>0&&puzzle.timeLimitPerMove)startTimer();
+    if(x===targetCell.x&&y===targetCell.y){stopTimer();sound.playPuzzleComplete();showPuzzleComplete();return;}
+    if(hasBorderCollapse&&!borderCollapseTriggered&&moveHistory.length>=2){borderCollapseTriggered=true;isWaitingForChaos=true;draw();collapseBorders();return;}
+    if(puzzle.chaos||puzzle.chaosSequence){
+      isWaitingForChaos=true;draw();
+      if(puzzle.chaosSequence&&chaosSequenceIndex<puzzle.chaosSequence.length){collapseSpecificCell(puzzle.chaosSequence[chaosSequenceIndex]);chaosSequenceIndex++;}
+      else if(puzzle.chaos){collapseStrategicCell();}
+      else{isWaitingForChaos=false;draw();}
+      return;
+    }
+  }
+  draw();
+  if(!isPuzzleMode&&getValidMoves().length===0){stopTimer();sound.playGameOver();showGameOverMessage(translations[currentLanguage].noMovesLeft);}
+  else if(gameMode==='hard'&&!isPuzzleMode){startTimer();}
+}
+
+function showPuzzleComplete(){
+  const t=translations[currentLanguage];const puzzle=allPuzzleLevels[currentPuzzleLevel];
+  const totalMoves=moveHistory.length;const name=t.levelNames[currentPuzzleLevel];
+  let stars=1;if(totalMoves<=puzzle.optimal)stars=3;else if(totalMoves<=puzzle.optimal+2)stars=2;
+  savePuzzleProgress(currentPuzzleLevel,stars);checkAchievements();
+  if(currentPuzzleLevel===79&&stars===3){createConfetti();setTimeout(()=>{alert(t.legendary);},500);}
+  document.getElementById("starRating").textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById("starRating").style.display="block";
+  document.getElementById("gameOverMessage").textContent=`${t.level} ${currentPuzzleLevel+1} ${t.puzzleComplete}`;
+  document.getElementById("gameOverReason").textContent=`${name} — ${totalMoves} ${t.movesWord.toLowerCase()} (${t.optimal}: ${puzzle.optimal})`;
+  document.getElementById("finalScore").textContent=totalMoves;
+  document.getElementById("finalScoreLbl").textContent=t.finalScore;
+  document.getElementById("newRecordMsg").style.display="none";
+  showAchievementsInGameOver();
+  const nextBtn=document.getElementById("nextPuzzleBtn");
+  nextBtn.style.display=currentPuzzleLevel<allPuzzleLevels.length-1?"inline-block":"none";
+  nextBtn.textContent=t.nextLevel;
+  document.getElementById("playAgainBtn").textContent=t.playAgain;
+  document.getElementById("goMenuBtn").textContent=t.mainMenu;
+  document.getElementById("gameOver").style.display="flex";
+}
+
+function showGameOverMessage(reason=''){
+  const t=translations[currentLanguage];
+  document.getElementById("starRating").style.display="none";
+  document.getElementById("nextPuzzleBtn").style.display="none";
+  document.getElementById("achievementsUnlocked").style.display="none";
+  let message='';
+  if(gameMode==='easy'){if(score<=14)message=t.messages.bad;else if(score<=23)message=t.messages.ok;else if(score<=29)message=t.messages.good;else if(score<=34)message=t.messages.great;else{message=t.messages.perfect;sound.playSuccess();}}
+  else if(gameMode==='expert'){if(score<=40)message=t.messages.bad;else if(score<=70)message=t.messages.ok;else if(score<=85)message=t.messages.good;else if(score<=98)message=t.messages.great;else{message=t.messages.perfect;sound.playSuccess();}}
+  else{if(score<=25)message=t.messages.bad;else if(score<=45)message=t.messages.ok;else if(score<=55)message=t.messages.good;else if(score<=62)message=t.messages.great;else{message=t.messages.perfect;sound.playSuccess();}}
+  const isNewRecord=saveHighScore(gameMode,score);
+  document.getElementById("finalScore").textContent=score;
+  document.getElementById("gameOverMessage").textContent=message;
+  document.getElementById("gameOverReason").textContent=reason;
+  document.getElementById("finalScoreLbl").textContent=t.finalScore;
+  const nm=document.getElementById("newRecordMsg");
+  if(isNewRecord&&score>0){nm.textContent=t.newRecord;nm.style.display="block";sound.playSuccess();}else nm.style.display="none";
+  document.getElementById("playAgainBtn").textContent=t.playAgain;
+  document.getElementById("goMenuBtn").textContent=t.mainMenu;
+  document.getElementById("gameOver").style.display="flex";
+}
+
+function buildWallSet(blocked){const set=new Set(blocked.map(b=>`${b.x},${b.y}`));const walls=new Set();blocked.forEach(b=>{const n=[{x:b.x+1,y:b.y},{x:b.x-1,y:b.y},{x:b.x,y:b.y+1},{x:b.x,y:b.y-1}];if(n.some(nb=>set.has(`${nb.x},${nb.y}`)))walls.add(`${b.x},${b.y}`);});return walls;}
+
+function draw(){
+  let cellSize=60,boardMarginTop='8px';
+  if(window.innerWidth<=700){
+    if(SIZE===6){cellSize=60;boardMarginTop='155px';}
+    else if(SIZE===8){cellSize=42;boardMarginTop='70px';}
+    else if(SIZE===10){cellSize=36;boardMarginTop='80px';}
+  }
+  boardEl.style.gridTemplateColumns=`repeat(${SIZE}, ${cellSize}px)`;
+  boardEl.style.gridTemplateRows=`repeat(${SIZE}, ${cellSize}px)`;
+  boardEl.style.marginTop=boardMarginTop;
+  boardEl.innerHTML="";
+  const validMoves=getValidMoves();
+  const wallSet=isPuzzleMode?buildWallSet(blockedCells):new Set();
+  const portalMap={};
+  if(isPuzzleMode){currentTeleports.forEach(tp=>{portalMap[`${tp.from.x},${tp.from.y}`]=tp.id;portalMap[`${tp.to.x},${tp.to.y}`]=tp.id;});}
+  for(let y=0;y<SIZE;y++){for(let x=0;x<SIZE;x++){
+    const cell=document.createElement("div");cell.className="cell";
+    cell.style.width=cellSize+'px';cell.style.height=cellSize+'px';
+    if((x+y)%2===1)cell.classList.add("dark");
+    if(board[y][x]===-1){cell.classList.add("blocked");cell.classList.add(wallSet.has(`${x},${y}`)?"wall":"solo");}
+    const pid=portalMap[`${x},${y}`];if(pid&&board[y][x]!==1&&board[y][x]!==-1)cell.classList.add(`portal-${pid}`);
+    if(isPuzzleMode&&targetCell&&x===targetCell.x&&y===targetCell.y)cell.classList.add("target");
+    if(board[y][x]===1){
+      cell.classList.add("knight");
+      const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 45 45");svg.setAttribute("width","80%");svg.setAttribute("height","80%");svg.style.pointerEvents="none";
+      svg.innerHTML=`<g style="fill:#ffffff; stroke:#000000; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;"><path d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18"/><path d="M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10"/><path d="M 9.5,25.5 A 0.5,0.5 0 1 1 8.5,25.5 A 0.5,0.5 0 1 1 9.5,25.5 z" style="fill:#000000;"/><path d="M 15,15.5 A 0.5,1.5 0 1 1 14,15.5 A 0.5,1.5 0 1 1 15,15.5 z" transform="matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)" style="fill:#000000;"/><path d="M 10,39 L 35,39" style="stroke-width:2;"/></g>`;
+      cell.appendChild(svg);
+    }
+    const isValid=validMoves.some(m=>m.x===x&&m.y===y);
+    if(!isWaitingForChaos&&isValid){cell.classList.add("valid");cell.onclick=()=>moveKnight(x,y);}
+    boardEl.appendChild(cell);
+  }}
+}
+
+function startGame(mode){gameMode=mode;isPuzzleMode=false;SIZE=mode==='easy'?6:mode==='expert'?10:8;document.getElementById("modeSelection").style.display="none";document.getElementById("statsScreen").style.display="none";document.getElementById("gameScreen").style.display="block";document.getElementById("puzzleInfo").classList.remove("active");document.getElementById("undoBtn").style.display="none";timerContainer.style.display=mode==='hard'?'block':'none';updateUI();updateHighScoreDisplay();restartGame();}
+function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();}
+function backToMenu(){stopTimer();document.getElementById("gameScreen").style.display="none";document.getElementById("gameOver").style.display="none";document.getElementById("statsScreen").style.display="none";if(isPuzzleMode){document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}else{document.getElementById("modeSelection").style.display="block";}isPuzzleMode=false;}
+function backToMainMenu(){document.getElementById("puzzleSelection").style.display="none";document.getElementById("statsScreen").style.display="none";document.getElementById("modeSelection").style.display="block";}
+
+// ─── BAŞLANGIÇ ────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadGameData();
+  const savedTheme=localStorage.getItem('knightTheme')||'dark';
+  const savedSound=localStorage.getItem('knightSound');
+  const savedLanguage=localStorage.getItem('knightLanguage')||'tr';
+  changeTheme(savedTheme);
+  if(savedSound!==null){soundEnabled=savedSound==='true';document.getElementById('soundIcon').textContent=soundEnabled?'🔊':'🔇';}
+  changeLanguage(savedLanguage);
+  loadPuzzleProgress();
+  loadAchievements();
+});
+
+// ─── CHEAT KODU ───────────────────────────────────────────────────────────────
+let cheatBuffer='';
+document.addEventListener('keydown',e=>{
+  cheatBuffer+=e.key.toLowerCase();
+  if(cheatBuffer.includes('kamil')){cheatBuffer='';for(let i=0;i<80;i++)puzzleProgress[i]=3;localStorage.setItem('knightPuzzleProgress',JSON.stringify(puzzleProgress));renderPuzzleLevels();alert('🎮 HİLE AKTİF! Tüm 80 bölüm açıldı!');}
+  if(cheatBuffer.length>10)cheatBuffer=cheatBuffer.slice(-10);
+  if(e.key==='r'&&(e.ctrlKey||e.metaKey)){e.preventDefault();restartGame();}
+  if(e.key==='z'&&(e.ctrlKey||e.metaKey)&&isPuzzleMode&&currentPuzzleLevel<10){e.preventDefault();undoMove();}
+});
+</script>
+</body>
+</html>
