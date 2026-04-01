@@ -12,15 +12,14 @@ body {
     color: #fff;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     margin: 0;
     padding: 0px;
     padding-top: 0px;
     min-height: 100vh;
     height: 100vh;
     width: 100vw;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     transition: background 0.3s ease;
 }
     body.light-theme  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
@@ -187,8 +186,26 @@ body {
     .teleporting { animation: teleport-flash 0.35s ease-out forwards !important; }
     .levelBtn.teleport { background: linear-gradient(135deg, #00bcd4 0%, #006064 100%); }
     .levelBtn.teleport.completed { background: linear-gradient(135deg, #00e5ff 0%, #0097a7 100%); }
+    /* ===== KİŞİSELLEŞTİRME BUTONU ===== */
+    #customizeBtn {
+      background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+      padding: 15px 40px;
+      font-size: 18px;
+      border-radius: 12px;
+      border: none;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(196,69,105,0.4);
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+    #customizeBtn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(196,69,105,0.6);
+    }
+
 @media (max-width: 700px) {
-    body {padding: 0; margin: 0; overflow-y: auto !important}
+    body {padding: 0; margin: 0;}
     #container {padding: 0; max-width: 100%; min-height: 100vh;}
     .header {padding: 6px 8px; gap: 6px; border-radius: 8px;}
     .header h2 {font-size: 14px;}
@@ -218,6 +235,7 @@ body {
     .modeBtn { padding: 14px 18px; font-size: 16px; }
     .modeBtn small { font-size: 12px !important; }
     #viewStatsMainBtn { padding: 12px 30px !important; font-size: 16px !important; }
+    #customizeBtn { padding: 12px 30px !important; font-size: 16px !important; }
     .levelBtn { padding: 14px; font-size: 16px; }
     .stars { font-size: 14px; margin-top: 4px; }
     .level-badge { font-size: 11px; padding: 2px 5px; }
@@ -306,8 +324,10 @@ body {
       <button class="theme-btn light" onclick="changeTheme('light')" id="themeLight"></button>
       <button class="theme-btn nature" onclick="changeTheme('nature')" id="themeNature"></button>
     </div>
-    <div style="text-align: center; margin: 30px 0 20px 0;">
+    <!-- İstatistik + Kişiselleştirme butonları yan yana -->
+    <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin: 30px 0 20px 0;">
       <button onclick="showStatsScreen()" style="background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); padding: 15px 40px; font-size: 18px; border-radius: 12px; border: none; color: white; cursor: pointer; box-shadow: 0 6px 20px rgba(0,188,212,0.4); transition: all 0.3s ease; font-weight: bold;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)'" onmouseout="this.style.transform='translateY(0) scale(1)'" id="viewStatsMainBtn">📊 İstatistiklerim & Başarımlar</button>
+      <button id="customizeBtn" onclick="showCustomizeScreen()">🎨 Kişiselleştir</button>
     </div>
     <div class="modeButtons">
       <button class="modeBtn easyBtn" onclick="startGame('easy')" id="modeEasy">😊 Kolay Mod<br><small style="font-size:14px;">(6x6 Tahta)</small></button>
@@ -402,6 +422,11 @@ let achievements={}, newlyUnlocked=[];
 let isWaitingForChaos=false, hasBorderCollapse=false, borderCollapseTriggered=false;
 let currentTimeLimit=0, chaosSequenceIndex=0, currentTeleports=[];
 
+// ─── KİŞİSELLEŞTİRME (ileride doldurulacak) ─────────────────────────────────
+function showCustomizeScreen() {
+  // TODO: kişiselleştirme ekranı buraya gelecek
+}
+
 // ─── ACHIEVEMENT CHECK FONKSİYONLARINI OLUŞTUR ───────────────────────────────
 function buildAchievementDefs() {
   achievementDefs = {};
@@ -489,9 +514,7 @@ function createConfetti(){const colors=['#FFD700','#FF6B6B','#4ECDC4','#45B7D1',
 
 function showStatsScreen(){const t=translations[currentLanguage];let ts=0,cl=0,pl=0;for(let i=0;i<80;i++){const s=puzzleProgress[i]||0;if(s>0)cl++;if(s===3)pl++;ts+=s;}const sr=cl>0?Math.round((ts/(cl*3))*100):0;document.getElementById("modeSelection").style.display="none";document.getElementById("puzzleSelection").style.display="none";document.getElementById("gameScreen").style.display="none";document.getElementById("statsScreen").style.display="block";document.getElementById("totalStars").textContent=ts;document.getElementById("completedLevels").textContent=cl;document.getElementById("perfectLevels").textContent=pl;document.getElementById("successRate").textContent=sr+"%";document.getElementById("starsProgress").style.width=(ts/240*100)+"%";document.getElementById("levelsProgress").style.width=(cl/80*100)+"%";updateUI();renderAchievements();document.getElementById("statsTitle").textContent=t.statsTitle;document.getElementById("totalStarsLbl").textContent=t.totalStarsLbl;document.getElementById("completedLevelsLbl").textContent=t.completedLevelsLbl;document.getElementById("perfectLevelsLbl").textContent=t.perfectLevelsLbl;document.getElementById("successRateLbl").textContent=t.successRateLbl;document.getElementById("achievementsTitle").textContent=t.achievementsTitle;}
 function renderAchievements(){const t=translations[currentLanguage];const container=document.getElementById("achievementsList");container.innerHTML="";for(const[key,def]of Object.entries(achievementDefs)){const ach=t.achievements[key];const unlocked=achievements[key]||false;const card=document.createElement("div");card.className="achievement-card "+(unlocked?"unlocked":"locked");card.innerHTML=`<div class="achievement-header"><div class="achievement-icon">${def.icon}</div><div class="achievement-info"><div class="achievement-name">${ach.name}</div><div class="achievement-desc">${ach.desc}</div></div></div>`;container.appendChild(card);}}
-function showPuzzleSelection(){loadPuzzleProgress();document.getElementById("modeSelection").style.display="none";document.getElementById("statsScreen").style.display="none";document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels(); window.scrollTo(0, 0);
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;}
+function showPuzzleSelection(){loadPuzzleProgress();document.getElementById("modeSelection").style.display="none";document.getElementById("statsScreen").style.display="none";document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}
 
 function renderPuzzleLevels(){
   const container=document.getElementById("puzzleLevels");
