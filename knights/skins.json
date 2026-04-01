@@ -3,6 +3,6 @@
   { "id": "gold",    "label": "Altın",    "file": "knight_gold.png",    "emoji": "🟡" },
   { "id": "dark",    "label": "Karanlık", "file": "knight_dark.svg",    "emoji": "⬛" },
   { "id": "neon",    "label": "Neon",     "file": "knight_neon.svg",    "emoji": "🩵" },
-  { "id": "fire",    "label": "Ateş",     "file": "knight_fire.svg",    "emoji": "🔴" },
+  { "id": "pegasus",    "label": "Pegasus",     "file": "knight_pegasus.png",    "emoji": "🪽" },
   { "id": "unicorn", "label": "Unicorn",  "file": "knight_unicorn.png", "emoji": "🦄" }
 ]
