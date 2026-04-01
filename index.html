@@ -12,7 +12,7 @@ body {
     color: #fff;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     margin: 0;
     padding: 0px;
     padding-top: 0px;
@@ -489,7 +489,9 @@ function createConfetti(){const colors=['#FFD700','#FF6B6B','#4ECDC4','#45B7D1',
 
 function showStatsScreen(){const t=translations[currentLanguage];let ts=0,cl=0,pl=0;for(let i=0;i<80;i++){const s=puzzleProgress[i]||0;if(s>0)cl++;if(s===3)pl++;ts+=s;}const sr=cl>0?Math.round((ts/(cl*3))*100):0;document.getElementById("modeSelection").style.display="none";document.getElementById("puzzleSelection").style.display="none";document.getElementById("gameScreen").style.display="none";document.getElementById("statsScreen").style.display="block";document.getElementById("totalStars").textContent=ts;document.getElementById("completedLevels").textContent=cl;document.getElementById("perfectLevels").textContent=pl;document.getElementById("successRate").textContent=sr+"%";document.getElementById("starsProgress").style.width=(ts/240*100)+"%";document.getElementById("levelsProgress").style.width=(cl/80*100)+"%";updateUI();renderAchievements();document.getElementById("statsTitle").textContent=t.statsTitle;document.getElementById("totalStarsLbl").textContent=t.totalStarsLbl;document.getElementById("completedLevelsLbl").textContent=t.completedLevelsLbl;document.getElementById("perfectLevelsLbl").textContent=t.perfectLevelsLbl;document.getElementById("successRateLbl").textContent=t.successRateLbl;document.getElementById("achievementsTitle").textContent=t.achievementsTitle;}
 function renderAchievements(){const t=translations[currentLanguage];const container=document.getElementById("achievementsList");container.innerHTML="";for(const[key,def]of Object.entries(achievementDefs)){const ach=t.achievements[key];const unlocked=achievements[key]||false;const card=document.createElement("div");card.className="achievement-card "+(unlocked?"unlocked":"locked");card.innerHTML=`<div class="achievement-header"><div class="achievement-icon">${def.icon}</div><div class="achievement-info"><div class="achievement-name">${ach.name}</div><div class="achievement-desc">${ach.desc}</div></div></div>`;container.appendChild(card);}}
-function showPuzzleSelection(){loadPuzzleProgress();document.getElementById("modeSelection").style.display="none";document.getElementById("statsScreen").style.display="none";document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}
+function showPuzzleSelection(){loadPuzzleProgress();document.getElementById("modeSelection").style.display="none";document.getElementById("statsScreen").style.display="none";document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels(); window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;}
 
 function renderPuzzleLevels(){
   const container=document.getElementById("puzzleLevels");
