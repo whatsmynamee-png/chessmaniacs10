@@ -455,22 +455,33 @@ let currentTimeLimit=0, chaosSequenceIndex=0, currentTeleports=[];
 
 // ─── AT GÖRSELİ (SKIN) SİSTEMİ ───────────────────────────────────────────────
 let knightSkin = 'classic';
+let KNIGHT_SKINS = [];  // knights/skins.json'dan yüklenir
 
-// Mevcut skinler — buraya yeni SVG ekledikçe listeyi genişlet
-const KNIGHT_SKINS = [
-  { id: 'classic', label: 'Klasik',  emoji: '⬜' },
-  { id: 'gold',    label: 'Altın',   emoji: '🟡' },
-  { id: 'dark',    label: 'Karanlık',emoji: '⬛' },
-  { id: 'neon',    label: 'Neon',    emoji: '🩵' },
-  { id: 'fire',    label: 'Ateş',    emoji: '🔴' },
-];
+// Dosya adından id üret: "knight_gold.png" → "gold"
+function fileToSkinId(filename) {
+  return filename.replace(/^knight_/, '').replace(/\.[^.]+$/, '');
+}
 
 function getKnightImgSrc(skinId) {
-  return `knights/knight_${skinId}.svg`;
+  const skin = KNIGHT_SKINS.find(s => s.id === skinId);
+  if (skin) return `knights/${skin.file}`;
+  return `knights/knight_${skinId}.svg`; // fallback
+}
+
+async function loadKnightSkins() {
+  try {
+    const res = await fetch('knights/skins.json');
+    KNIGHT_SKINS = await res.json();
+  } catch(e) {
+    console.warn('skins.json yüklenemedi, varsayılan skin kullanılıyor.');
+    KNIGHT_SKINS = [{ id: 'classic', label: 'Klasik', file: 'knight_classic.svg', emoji: '⬜' }];
+  }
 }
 
 function loadKnightSkin() {
-  knightSkin = localStorage.getItem('knightSkin') || 'classic';
+  const saved = localStorage.getItem('knightSkin') || 'classic';
+  // Kaydedilen skin hâlâ listede var mı kontrol et
+  knightSkin = KNIGHT_SKINS.find(s => s.id === saved) ? saved : (KNIGHT_SKINS[0]?.id || 'classic');
 }
 
 function saveKnightSkin(skinId) {
@@ -488,17 +499,25 @@ function showCustomizeScreen() {
 function renderSkinGrid() {
   const grid = document.getElementById('skinGrid');
   grid.innerHTML = '';
+
+  if (KNIGHT_SKINS.length === 0) {
+    grid.innerHTML = '<p style="color:#aaa;">Skin bulunamadı. knights/skins.json dosyasını kontrol edin.</p>';
+    return;
+  }
+
   KNIGHT_SKINS.forEach(skin => {
     const card = document.createElement('div');
     card.className = 'skin-card' + (knightSkin === skin.id ? ' selected' : '');
     card.innerHTML = `
-      <img src="${getKnightImgSrc(skin.id)}" alt="${skin.label}" onerror="this.style.fontSize='40px';this.outerHTML='<span style=\\'font-size:40px\\'>${skin.emoji}</span>'">
+      <img src="knights/${skin.file}" alt="${skin.label}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <span style="font-size:40px;display:none;">${skin.emoji || '♞'}</span>
       <div class="skin-name">${skin.label}</div>
       <div class="skin-check"></div>
     `;
     card.onclick = () => {
       saveKnightSkin(skin.id);
-      renderSkinGrid(); // seçimi güncelle
+      renderSkinGrid();
       if (soundEnabled) sound.playTone(660, 0.08, 'sine');
     };
     grid.appendChild(card);
@@ -570,6 +589,8 @@ async function loadGameData() {
     console.error('JSON yükleme hatası:', e);
     alert('Veri dosyaları yüklenemedi. Dosyaların aynı klasörde olduğundan emin olun.');
   }
+  // Skinleri ayrıca yükle (hata olsa da oyun devam eder)
+  await loadKnightSkins();
 }
 
 // ─── SES MOTORu ──────────────────────────────────────────────────────────────
