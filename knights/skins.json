@@ -4,5 +4,7 @@
   { "id": "royal",    "label": "Kraliyet", "file": "knight_royal.png",    "emoji": "👑" },
   { "id": "armored",    "label": "Zırhlı",     "file": "knight_armored.png",    "emoji": "⚔️" },
   { "id": "pegasus",    "label": "Pegasus",     "file": "knight_pegasus.png",    "emoji": "🪽" },
-  { "id": "unicorn", "label": "Unicorn",  "file": "knight_unicorn.png", "emoji": "🦄" }
+  { "id": "unicorn", "label": "Unicorn",  "file": "knight_unicorn.png", "emoji": "🦄" },
+  { "id": "flame", "label": "Alevli", "file": "knight_flame.png", "emoji": "🔥"},
+  { "id": "robot", "label": "Robotik", "file": "knight_robot.png", "emoji": "🤖"},
 ]
