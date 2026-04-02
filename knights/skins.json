@@ -1,8 +1,8 @@
 [
   { "id": "classic", "label": "Klasik",   "file": "knight_white.png",   "emoji": "⬜" },
   { "id": "gold",    "label": "Altın",    "file": "knight_gold.png",    "emoji": "🟡" },
-  { "id": "dark",    "label": "Karanlık", "file": "knight_dark.svg",    "emoji": "⬛" },
-  { "id": "neon",    "label": "Neon",     "file": "knight_neon.svg",    "emoji": "🩵" },
+  { "id": "royal",    "label": "Kraliyet", "file": "knight_royal.png",    "emoji": "👑" },
+  { "id": "armored",    "label": "Zırhlı",     "file": "knight_armored.png",    "emoji": "⚔️" },
   { "id": "pegasus",    "label": "Pegasus",     "file": "knight_pegasus.png",    "emoji": "🪽" },
   { "id": "unicorn", "label": "Unicorn",  "file": "knight_unicorn.png", "emoji": "🦄" }
 ]
