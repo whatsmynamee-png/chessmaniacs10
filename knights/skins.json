@@ -1,10 +1,10 @@
 [
-  { "id": "classic", "label": "Klasik",   "file": "knight_white.png",   "emoji": "⬜" },
-  { "id": "gold",    "label": "Altın",    "file": "knight_gold.png",    "emoji": "🟡" },
-  { "id": "royal",    "label": "Kraliyet", "file": "knight_royal.png",    "emoji": "👑" },
-  { "id": "armored",    "label": "Zırhlı",     "file": "knight_armored.png",    "emoji": "⚔️" },
-  { "id": "pegasus",    "label": "Pegasus",     "file": "knight_pegasus.png",    "emoji": "🪽" },
-  { "id": "unicorn", "label": "Unicorn",  "file": "knight_unicorn.png", "emoji": "🦄" },
-  { "id": "flame", "label": "Alevli", "file": "knight_flame.png", "emoji": "🔥"},
-  { "id": "robot", "label": "Robotik", "file": "knight_robot.png", "emoji": "🤖"}
+{ "id": "classic", "labels": {"tr": "Klasik", "en": "Classic", "es": "Clásico"}, "file": "knight_white.png", "emoji": "⬜" },
+{ "id": "gold",    "labels": {"tr": "Altın",  "en": "Gold",    "es": "Oro"},     "file": "knight_gold.png",  "emoji": "🟡" },
+{ "id": "royal",   "labels": {"tr": "Kraliyet","en": "Royal",  "es": "Real"},    "file": "knight_royal.png", "emoji": "👑" },
+{ "id": "armored", "labels": {"tr": "Zırhlı", "en": "Armored", "es": "Blindado"},"file": "knight_armored.png","emoji": "⚔️" },
+{ "id": "pegasus", "labels": {"tr": "Pegasus","en": "Pegasus", "es": "Pegaso"},  "file": "knight_pegasus.png","emoji": "🪽" },
+{ "id": "unicorn", "labels": {"tr": "Unicorn","en": "Unicorn", "es": "Unicornio"},"file": "knight_unicorn.png","emoji": "🦄" },
+{ "id": "flame",   "labels": {"tr": "Alevli", "en": "Flame",   "es": "Llama"},   "file": "knight_flame.png", "emoji": "🔥" },
+{ "id": "robot",   "labels": {"tr": "Robotik","en": "Robot",   "es": "Robot"},   "file": "knight_robot.png", "emoji": "🤖" }
 ]
