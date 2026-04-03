@@ -208,16 +208,9 @@ async function loadKnightSkins() {
   }
 }
 
-function loadKnightSkin() {
-  const saved = localStorage.getItem('knightSkin') || 'classic';
-  // Kaydedilen skin hâlâ listede var mı kontrol et
-  knightSkin = KNIGHT_SKINS.find(s => s.id === saved) ? saved : (KNIGHT_SKINS[0]?.id || 'classic');
-}
 
-function saveKnightSkin(skinId) {
-  knightSkin = skinId;
-  localStorage.setItem('knightSkin', skinId);
-}
+
+
 
 // ─── KİŞİSELLEŞTİRME EKRANI ──────────────────────────────────────────────────
 function showCustomizeScreen() {
@@ -325,10 +318,6 @@ async function loadGameData() {
 
 // ─── YARDIMCI FONKSİYONLAR ───────────────────────────────────────────────────
 function showTutorialMessage(message){const el=document.getElementById("tutorialMessage");el.textContent=message;el.style.display="block";el.classList.remove("fade-out");setTimeout(()=>{el.classList.add("fade-out");setTimeout(()=>{el.style.display="none";},500);},3500);}
-function loadPuzzleProgress(){const s=localStorage.getItem('knightPuzzleProgress');puzzleProgress=s?JSON.parse(s):{};}
-function savePuzzleProgress(level,stars){if(!puzzleProgress[level]||puzzleProgress[level]<stars){puzzleProgress[level]=stars;localStorage.setItem('knightPuzzleProgress',JSON.stringify(puzzleProgress));}}
-function loadAchievements(){const s=localStorage.getItem('knightAchievements');achievements=s?JSON.parse(s):{};}
-function saveAchievements(){localStorage.setItem('knightAchievements',JSON.stringify(achievements));}
 function checkAchievements(){newlyUnlocked=[];for(const[key,def]of Object.entries(achievementDefs)){if(!achievements[key]&&def.check()){achievements[key]=true;newlyUnlocked.push(key);sound.playAchievement();}}saveAchievements();}
 function showAchievementsInGameOver(){if(newlyUnlocked.length===0){document.getElementById("achievementsUnlocked").style.display="none";return;}const t=translations[currentLanguage];const container=document.getElementById("unlockedAchievementsList");container.innerHTML="";newlyUnlocked.forEach(key=>{const def=achievementDefs[key];const ach=t.achievements[key];const item=document.createElement("div");item.className="achievement-item";item.innerHTML=`<div class="icon">${def.icon}</div><div class="text"><div class="title">${ach.name}</div><div class="desc">${ach.desc}</div></div>`;container.appendChild(item);});document.getElementById("achievementsUnlocked").style.display="block";}
 function createConfetti(){const colors=['#FFD700','#FF6B6B','#4ECDC4','#45B7D1','#FFA07A','#98D8C8'];for(let i=0;i<50;i++){setTimeout(()=>{const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=colors[Math.floor(Math.random()*colors.length)];c.style.animationDuration=(Math.random()*2+2)+'s';c.style.animationDelay=(Math.random()*0.5)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000);},i*30);}}
@@ -415,8 +404,6 @@ function updateUI(){const t=translations[currentLanguage];document.querySelector
 function updateModeLabel(){const t=translations[currentLanguage];const el=document.getElementById("modeLabel");const map={easy:[t.easyLabel,'#8BC34A'],classic:[t.classicLabel,'#4CAF50'],hard:[t.hardLabel,'#ff5252'],expert:[t.expertLabel,'#9C27B0'],puzzle:[t.puzzleLabel,'#FFA726']};const[text,color]=map[gameMode]||['','#fff'];el.textContent=text;el.style.color=color;}
 function changeTheme(theme){currentTheme=theme;document.body.className=theme+'-theme';document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.theme-btn.'+theme).forEach(b=>b.classList.add('active'));localStorage.setItem('knightTheme',theme);}
 function toggleSound(){soundEnabled=!soundEnabled;document.getElementById('soundIcon').textContent=soundEnabled?'🔊':'🔇';localStorage.setItem('knightSound',soundEnabled);if(soundEnabled)sound.playTone(440,0.1);}
-function saveHighScore(mode,sc){const key='knightHighScore_'+mode;const cur=parseInt(localStorage.getItem(key)||'0');if(sc>cur){localStorage.setItem(key,sc);return true;}return false;}
-function loadHighScore(mode){return parseInt(localStorage.getItem('knightHighScore_'+mode)||'0');}
 function updateHighScoreDisplay(){highScoreEl.textContent=loadHighScore(gameMode);}
 function inside(x,y){return x>=0&&x<SIZE&&y>=0&&y<SIZE;}
 function isOnBorder(x,y){return x===0||x===SIZE-1||y===0||y===SIZE-1;}
