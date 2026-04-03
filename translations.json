@@ -101,6 +101,10 @@
       "great":   "HADİ BE!",
       "perfect": "HELAL LAN SANA!"
     }
+    "customizeBtn": "🎨 Kişiselleştir",
+"customizeTitle": "🎨 Kişiselleştir",
+"customizeSubtitle": "Atın görünümünü seç",
+"backFromCustomize": "⬅️ Ana Menü",
   },
 
   "en": {
@@ -205,6 +209,10 @@
       "great":   "AMAZING!",
       "perfect": "PERFECT GAME!"
     }
+    "customizeBtn": "🎨 Customize",
+"customizeTitle": "🎨 Customize",
+"customizeSubtitle": "Choose your knight skin",
+"backFromCustomize": "⬅️ Main Menu",
   },
 
   "es": {
@@ -310,4 +318,8 @@
       "perfect": "¡PARTIDA PERFECTA!"
     }
   }
+  "customizeBtn": "🎨 Personalizar",
+"customizeTitle": "🎨 Personalizar",
+"customizeSubtitle": "Elige el aspecto de tu caballo",
+"backFromCustomize": "⬅️ Menú",
 }
