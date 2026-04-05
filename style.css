@@ -573,6 +573,7 @@ button.info    { background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%); 
   .star-rating { font-size: 40px; margin: 18px 0; }
   .skin-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
   .blindBtn { background: linear-gradient(135deg, #424242 0%, #212121 100%); color: white; }
+  .speedBtn { background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); color: white; }
 }
 
 /* ── MOBİL (max 400px) ── */
