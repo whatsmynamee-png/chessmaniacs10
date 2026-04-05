@@ -41,3 +41,14 @@ function saveKnightSkin(skinId) {
   knightSkin = skinId;
   localStorage.setItem('knightSkin', skinId);
 }
+
+function saveSpeedRecord(mode, ms) {
+  const key = 'knightSpeedRecord_' + mode;
+  const cur = parseInt(localStorage.getItem(key) || '999999999');
+  if (ms < cur) { localStorage.setItem(key, ms); return true; }
+  return false;
+}
+
+function loadSpeedRecord(mode) {
+  return parseInt(localStorage.getItem('knightSpeedRecord_' + mode) || '0');
+}
