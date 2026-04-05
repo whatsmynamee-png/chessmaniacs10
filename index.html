@@ -487,10 +487,13 @@ function moveKnight(x,y){
   draw();
 if(!isPuzzleMode&&getValidMoves().length===0){
   stopTimer();
-  if(gameMode==='speed'){
+if(gameMode==='speed'){
+  const totalCells=SIZE*SIZE;
+  const visitedCells=score+1;
+  const t=translations[currentLanguage];
+  if(visitedCells>=totalCells){
     const elapsed=getSpeedElapsed();
-    const t=translations[currentLanguage];
-    const isRecord=saveSpeedRecord('speed6x6', elapsed);
+    const isRecord=saveSpeedRecord('speed6x6',elapsed);
     const best=loadSpeedRecord('speed6x6');
     sound.playPuzzleComplete();
     createConfetti();
@@ -507,9 +510,29 @@ if(!isPuzzleMode&&getValidMoves().length===0){
     document.getElementById("goMenuBtn").textContent=t.mainMenu;
     document.getElementById("gameOver").style.display="flex";
   } else {
+    let message='';
+    if(score<=14)message=t.messages.bad;
+    else if(score<=23)message=t.messages.ok;
+    else if(score<=29)message=t.messages.good;
+    else if(score<=34)message=t.messages.great;
+    else message=t.messages.perfect;
+    document.getElementById("starRating").style.display="none";
+    document.getElementById("nextPuzzleBtn").style.display="none";
+    document.getElementById("achievementsUnlocked").style.display="none";
+    document.getElementById("gameOverMessage").textContent=message;
+    document.getElementById("finalScore").textContent=score;
+    document.getElementById("finalScoreLbl").textContent=t.finalScore;
+    document.getElementById("newRecordMsg").style.display="none";
+    document.getElementById("gameOverReason").textContent=t.noMovesLeft;
+    document.getElementById("playAgainBtn").textContent=t.playAgain;
+    document.getElementById("goMenuBtn").textContent=t.mainMenu;
+    document.getElementById("gameOver").style.display="flex";
     sound.playGameOver();
-    showGameOverMessage(translations[currentLanguage].noMovesLeft);
   }
+} else {
+  sound.playGameOver();
+  showGameOverMessage(translations[currentLanguage].noMovesLeft);
+}
 }  else if(gameMode==='hard'&&!isPuzzleMode){startTimer();}
 }
 
@@ -595,7 +618,7 @@ function draw(){
     }
     const isValid=validMoves.some(m=>m.x===x&&m.y===y);
     if(!isWaitingForChaos&&isValid){
-  if(gameMode!=='blind'&&gameMode!=='speed') cell.classList.add("valid");
+  if(gameMode!=='blind') cell.classList.add("valid");
   cell.onclick=()=>moveKnight(x,y);
 }
     boardEl.appendChild(cell);
