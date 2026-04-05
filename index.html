@@ -567,7 +567,7 @@ function draw(){
     }
     const isValid=validMoves.some(m=>m.x===x&&m.y===y);
     if(!isWaitingForChaos&&isValid){
-  if(gameMode!=='blind') cell.classList.add("valid");
+  if(gameMode!=='blind'&&gameMode!=='speed') cell.classList.add("valid");
   cell.onclick=()=>moveKnight(x,y);
 }
     boardEl.appendChild(cell);
@@ -575,7 +575,7 @@ function draw(){
 }
 
 function startGame(mode){gameMode=mode;isPuzzleMode=false;SIZE=mode==='easy'?6:mode==='blind'?6:mode==='speed'?6:mode==='expert'?10:8;hideAllScreens();document.getElementById("gameScreen").style.display="block";document.getElementById("puzzleInfo").classList.remove("active");document.getElementById("undoBtn").style.display="none";timerContainer.style.display=mode==='hard'?'block':'none';updateUI();updateHighScoreDisplay();restartGame();}
-function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'||gameMode==='blind'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();}
+function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();}
 function backToMenu(){stopTimer();hideAllScreens();document.getElementById("gameOver").style.display="none";if(isPuzzleMode){document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}else{document.getElementById("modeSelection").style.display="block";}isPuzzleMode=false;}
 function backToMainMenu(){hideAllScreens();document.getElementById("modeSelection").style.display="block";}
 
