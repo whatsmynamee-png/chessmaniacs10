@@ -186,6 +186,7 @@ let moveHistory=[], puzzleProgress={}, blockedCells=[];
 let achievements={}, newlyUnlocked=[];
 let isWaitingForChaos=false, hasBorderCollapse=false, borderCollapseTriggered=false;
 let currentTimeLimit=0, chaosSequenceIndex=0, currentTeleports=[];
+let speedStartTime=0, speedInterval=null;
 
 // ─── AT GÖRSELİ (SKIN) SİSTEMİ ───────────────────────────────────────────────
 let knightSkin = 'classic';
@@ -416,9 +417,12 @@ function inside(x,y){return x>=0&&x<SIZE&&y>=0&&y<SIZE;}
 function isOnBorder(x,y){return x===0||x===SIZE-1||y===0||y===SIZE-1;}
 const knightOffsets=[{x:2,y:1},{x:1,y:2},{x:-1,y:2},{x:-2,y:1},{x:-2,y:-1},{x:-1,y:-2},{x:1,y:-2},{x:2,y:-1}];
 function getValidMoves(){return knightOffsets.map(m=>({x:knight.x+m.x,y:knight.y+m.y})).filter(p=>inside(p.x,p.y)&&board[p.y][p.x]===0);}
-
+function formatTime(ms){const m=Math.floor(ms/60000);const s=Math.floor((ms%60000)/1000);const ms2=Math.floor((ms%1000)/10);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}:${String(ms2).padStart(2,'0')}`;}
+function startSpeedTimer(){speedStartTime=Date.now();speedInterval=setInterval(()=>{timerEl.textContent=formatTime(Date.now()-speedStartTime);},50);}
+function stopSpeedTimer(){if(speedInterval){clearInterval(speedInterval);speedInterval=null;}}
+function getSpeedElapsed(){return Date.now()-speedStartTime;}
 function startTimer(){if(gameMode!=='hard'&&!currentTimeLimit)return;stopTimer();remainingTime=currentTimeLimit||3;timerEl.textContent=remainingTime;timerEl.classList.remove('warning');timerInterval=setInterval(()=>{remainingTime--;timerEl.textContent=remainingTime;if(remainingTime<=5)timerEl.classList.add('warning');if(remainingTime<=0){stopTimer();showGameOverMessage(translations[currentLanguage].timeUp);}},1000);}
-function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}timerEl.classList.remove('warning');}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}stopSpeedTimer();timerEl.classList.remove('warning');}
 function canReachTarget(){if(!targetCell)return true;const queue=[{x:knight.x,y:knight.y}];const visited=new Set();visited.add(`${knight.x},${knight.y}`);while(queue.length>0){const pos=queue.shift();if(pos.x===targetCell.x&&pos.y===targetCell.y)return true;knightOffsets.forEach(offset=>{const nx=pos.x+offset.x,ny=pos.y+offset.y,key=`${nx},${ny}`;if(inside(nx,ny)&&board[ny][nx]===0&&!visited.has(key)){visited.add(key);queue.push({x:nx,y:ny});}});}return false;}
 function willStillBeReachable(testX,testY){const original=board[testY][testX];board[testY][testX]=-1;const canReach=canReachTarget();board[testY][testX]=original;return canReach;}
 
@@ -481,8 +485,32 @@ function moveKnight(x,y){
     }
   }
   draw();
-  if(!isPuzzleMode&&getValidMoves().length===0){stopTimer();sound.playGameOver();showGameOverMessage(translations[currentLanguage].noMovesLeft);}
-  else if(gameMode==='hard'&&!isPuzzleMode){startTimer();}
+if(!isPuzzleMode&&getValidMoves().length===0){
+  stopTimer();
+  if(gameMode==='speed'){
+    const elapsed=getSpeedElapsed();
+    const t=translations[currentLanguage];
+    const isRecord=saveSpeedRecord('speed6x6', elapsed);
+    const best=loadSpeedRecord('speed6x6');
+    sound.playPuzzleComplete();
+    createConfetti();
+    document.getElementById("gameOverMessage").textContent=t.messages.perfect;
+    document.getElementById("finalScore").textContent=formatTime(elapsed);
+    document.getElementById("finalScoreLbl").textContent=t.bestTime;
+    document.getElementById("starRating").style.display="none";
+    document.getElementById("nextPuzzleBtn").style.display="none";
+    document.getElementById("achievementsUnlocked").style.display="none";
+    const nm=document.getElementById("newRecordMsg");
+    if(isRecord){nm.textContent=t.newSpeedRecord;nm.style.display="block";}else nm.style.display="none";
+    document.getElementById("gameOverReason").textContent=`${t.bestTime}: ${formatTime(best)}`;
+    document.getElementById("playAgainBtn").textContent=t.playAgain;
+    document.getElementById("goMenuBtn").textContent=t.mainMenu;
+    document.getElementById("gameOver").style.display="flex";
+  } else {
+    sound.playGameOver();
+    showGameOverMessage(translations[currentLanguage].noMovesLeft);
+  }
+}  else if(gameMode==='hard'&&!isPuzzleMode){startTimer();}
 }
 
 function showPuzzleComplete(){
@@ -574,9 +602,8 @@ function draw(){
   }}
 }
 
-function startGame(mode){gameMode=mode;isPuzzleMode=false;SIZE=mode==='easy'?6:mode==='blind'?6:mode==='speed'?6:mode==='expert'?10:8;hideAllScreens();document.getElementById("gameScreen").style.display="block";document.getElementById("puzzleInfo").classList.remove("active");document.getElementById("undoBtn").style.display="none";timerContainer.style.display=mode==='hard'?'block':'none';updateUI();updateHighScoreDisplay();restartGame();}
-function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();}
-function backToMenu(){stopTimer();hideAllScreens();document.getElementById("gameOver").style.display="none";if(isPuzzleMode){document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}else{document.getElementById("modeSelection").style.display="block";}isPuzzleMode=false;}
+function startGame(mode){gameMode=mode;isPuzzleMode=false;SIZE=mode==='easy'?6:mode==='blind'?6:mode==='speed'?6:mode==='expert'?10:8;hideAllScreens();document.getElementById("gameScreen").style.display="block";document.getElementById("puzzleInfo").classList.remove("active");document.getElementById("undoBtn").style.display="none";timerContainer.style.display=(mode==='hard'||mode==='speed')?'block':'none';updateUI();updateHighScoreDisplay();restartGame();}
+function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();if(gameMode==='speed'){timerEl.textContent='00:00:00';startSpeedTimer();}}function backToMenu(){stopTimer();hideAllScreens();document.getElementById("gameOver").style.display="none";if(isPuzzleMode){document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}else{document.getElementById("modeSelection").style.display="block";}isPuzzleMode=false;}
 function backToMainMenu(){hideAllScreens();document.getElementById("modeSelection").style.display="block";}
 
 // ─── BAŞLANGIÇ ────────────────────────────────────────────────────────────────
