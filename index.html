@@ -594,7 +594,7 @@ function showGameOverMessage(reason=''){
   document.getElementById("nextPuzzleBtn").style.display="none";
   document.getElementById("achievementsUnlocked").style.display="none";
   let message='';
-  if(gameMode==='easy'){if(score<=14)message=t.messages.bad;else if(score<=23)message=t.messages.ok;else if(score<=29)message=t.messages.good;else if(score<=34)message=t.messages.great;else{message=t.messages.perfect;sound.playSuccess();}}
+  if(gameMode==='easy'||gameMode==='blind'){if(score<=14)message=t.messages.bad;else if(score<=23)message=t.messages.ok;else if(score<=29)message=t.messages.good;else if(score<=34)message=t.messages.great;else{message=t.messages.perfect;sound.playSuccess();}}
   else if(gameMode==='expert'){if(score<=40)message=t.messages.bad;else if(score<=70)message=t.messages.ok;else if(score<=85)message=t.messages.good;else if(score<=98)message=t.messages.great;else{message=t.messages.perfect;sound.playSuccess();}}
   else{if(score<=25)message=t.messages.bad;else if(score<=45)message=t.messages.ok;else if(score<=55)message=t.messages.good;else if(score<=62)message=t.messages.great;else{message=t.messages.perfect;sound.playSuccess();}}
   const isNewRecord=saveHighScore(gameMode,score);
