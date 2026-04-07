@@ -494,6 +494,29 @@ function moveKnight(x,y){
   draw();
 if(!isPuzzleMode&&getValidMoves().length===0){
   stopTimer();
+  if(gameMode==='blind'){
+  const totalCells=SIZE*SIZE;
+  const visitedCells=score+1;
+  const t=translations[currentLanguage];
+  if(visitedCells>=totalCells){
+    sound.playPuzzleComplete();
+    createConfetti();
+    const isNewRecord=saveHighScore('blind',score);
+    document.getElementById("gameOverMessage").textContent=t.messages.perfect;
+    document.getElementById("finalScore").textContent=score;
+    document.getElementById("finalScoreLbl").textContent=t.finalScore;
+    document.getElementById("starRating").style.display="none";
+    document.getElementById("nextPuzzleBtn").style.display="none";
+    document.getElementById("achievementsUnlocked").style.display="none";
+    const nm=document.getElementById("newRecordMsg");
+    if(isNewRecord){nm.textContent=t.newRecord;nm.style.display="block";}else nm.style.display="none";
+    document.getElementById("gameOverReason").textContent="";
+    document.getElementById("playAgainBtn").textContent=t.playAgain;
+    document.getElementById("goMenuBtn").textContent=t.mainMenu;
+    document.getElementById("gameOver").style.display="flex";
+    return;
+  }
+}
 if(gameMode==='speed'){
   const totalCells=SIZE*SIZE;
   const visitedCells=score+1;
