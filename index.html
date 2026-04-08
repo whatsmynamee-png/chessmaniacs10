@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" ...>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CHESSMANIA - Ultimate Edition 80 Levels</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♟️</text></svg>">
   <link rel="stylesheet" href="style.css">
@@ -190,9 +190,8 @@ let speedStartTime=0, speedInterval=null;
 
 // ─── AT GÖRSELİ (SKIN) SİSTEMİ ───────────────────────────────────────────────
 let knightSkin = 'classic';
-let KNIGHT_SKINS = [];  // knights/skins.json'dan yüklenir
+let KNIGHT_SKINS = [];
 
-// Dosya adından id üret: "knight_gold.png" → "gold"
 function fileToSkinId(filename) {
   return filename.replace(/^knight_/, '').replace(/\.[^.]+$/, '');
 }
@@ -200,7 +199,7 @@ function fileToSkinId(filename) {
 function getKnightImgSrc(skinId) {
   const skin = KNIGHT_SKINS.find(s => s.id === skinId);
   if (skin) return `knights/${skin.file}`;
-  return `knights/knight_${skinId}.svg`; // fallback
+  return `knights/knight_${skinId}.svg`;
 }
 
 async function loadKnightSkins() {
@@ -213,10 +212,6 @@ async function loadKnightSkins() {
   }
 }
 
-
-
-
-
 // ─── KİŞİSELLEŞTİRME EKRANI ──────────────────────────────────────────────────
 function showCustomizeScreen() {
   hideAllScreens();
@@ -227,12 +222,10 @@ function showCustomizeScreen() {
 function renderSkinGrid() {
   const grid = document.getElementById('skinGrid');
   grid.innerHTML = '';
-
   if (KNIGHT_SKINS.length === 0) {
     grid.innerHTML = '<p style="color:#aaa;">Skin bulunamadı. knights/skins.json dosyasını kontrol edin.</p>';
     return;
   }
-
   KNIGHT_SKINS.forEach(skin => {
     const card = document.createElement('div');
     card.className = 'skin-card' + (knightSkin === skin.id ? ' selected' : '');
@@ -258,7 +251,8 @@ function hideAllScreens() {
   });
 }
 
-// ─── ACHIEVEMENT CHECK FONKSİYONLARINI OLUŞTUR ───────────────────────────────
+// ─── ACHIEVEMENT TANIMLARI ────────────────────────────────────────────────────
+// DÜZELTİLDİ: Tüm else if blokları aynı seviyede, doğru parantez yapısıyla
 function buildAchievementDefs() {
   achievementDefs = {};
   for (const [key, meta] of Object.entries(achievementMeta)) {
@@ -297,6 +291,24 @@ function buildAchievementDefs() {
         }
         return c >= count;
       }};
+    } else if (meta.blindComplete) {
+      // Blind mod: 6x6 = 36 hücre, başlangıç hücresi dahil, yani score >= 35
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        const best = loadHighScore('blind');
+        return best >= 35;
+      }};
+    } else if (meta.speedComplete) {
+      // Speed mod: herhangi bir tamamlama kaydı varsa
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        return loadSpeedRecord('speed6x6') > 0;
+      }};
+    } else if (meta.speedUnder !== undefined) {
+      // Speed mod: belirli süre altında tamamlama (ms cinsinden)
+      const threshold = meta.speedUnder;
+      achievementDefs[key] = { icon: meta.icon, check: () => {
+        const best = loadSpeedRecord('speed6x6');
+        return best > 0 && best <= threshold;
+      }};
     }
   }
 }
@@ -317,7 +329,6 @@ async function loadGameData() {
     console.error('JSON yükleme hatası:', e);
     alert('Veri dosyaları yüklenemedi. Dosyaların aynı klasörde olduğundan emin olun.');
   }
-  // Skinleri ayrıca yükle (hata olsa da oyun devam eder)
   await loadKnightSkins();
 }
 
@@ -492,78 +503,86 @@ function moveKnight(x,y){
     }
   }
   draw();
-if(!isPuzzleMode&&getValidMoves().length===0){
-  stopTimer();
-  if(gameMode==='blind'){
-  const totalCells=SIZE*SIZE;
-  const visitedCells=score+1;
-  const t=translations[currentLanguage];
-  if(visitedCells>=totalCells){
-    sound.playPuzzleComplete();
-    createConfetti();
-    const isNewRecord=saveHighScore('blind',score);
-    document.getElementById("gameOverMessage").textContent=t.messages.perfect;
-    document.getElementById("finalScore").textContent=score;
-    document.getElementById("finalScoreLbl").textContent=t.finalScore;
-    document.getElementById("starRating").style.display="none";
-    document.getElementById("nextPuzzleBtn").style.display="none";
-    document.getElementById("achievementsUnlocked").style.display="none";
-    const nm=document.getElementById("newRecordMsg");
-    if(isNewRecord){nm.textContent=t.newRecord;nm.style.display="block";}else nm.style.display="none";
-    document.getElementById("gameOverReason").textContent="";
-    document.getElementById("playAgainBtn").textContent=t.playAgain;
-    document.getElementById("goMenuBtn").textContent=t.mainMenu;
-    document.getElementById("gameOver").style.display="flex";
-    return;
-  }
-}
-if(gameMode==='speed'){
-  const totalCells=SIZE*SIZE;
-  const visitedCells=score+1;
-  const t=translations[currentLanguage];
-  if(visitedCells>=totalCells){
-    const elapsed=getSpeedElapsed();
-    const isRecord=saveSpeedRecord('speed6x6',elapsed);
-    const best=loadSpeedRecord('speed6x6');
-    sound.playPuzzleComplete();
-    createConfetti();
-    document.getElementById("gameOverMessage").textContent=t.messages.perfect;
-    document.getElementById("finalScore").textContent=formatTime(elapsed);
-    document.getElementById("finalScoreLbl").textContent=t.bestTime;
-    document.getElementById("starRating").style.display="none";
-    document.getElementById("nextPuzzleBtn").style.display="none";
-    document.getElementById("achievementsUnlocked").style.display="none";
-    const nm=document.getElementById("newRecordMsg");
-    if(isRecord){nm.textContent=t.newSpeedRecord;nm.style.display="block";}else nm.style.display="none";
-    document.getElementById("gameOverReason").textContent=`${t.bestTime}: ${formatTime(best)}`;
-    document.getElementById("playAgainBtn").textContent=t.playAgain;
-    document.getElementById("goMenuBtn").textContent=t.mainMenu;
-    document.getElementById("gameOver").style.display="flex";
-  } else {
-    let message='';
-    if(score<=14)message=t.messages.bad;
-    else if(score<=23)message=t.messages.ok;
-    else if(score<=29)message=t.messages.good;
-    else if(score<=34)message=t.messages.great;
-    else message=t.messages.perfect;
-    document.getElementById("starRating").style.display="none";
-    document.getElementById("nextPuzzleBtn").style.display="none";
-    document.getElementById("achievementsUnlocked").style.display="none";
-    document.getElementById("gameOverMessage").textContent=message;
-    document.getElementById("finalScore").textContent=score;
-    document.getElementById("finalScoreLbl").textContent=t.finalScore;
-    document.getElementById("newRecordMsg").style.display="none";
-    document.getElementById("gameOverReason").textContent=t.noMovesLeft;
-    document.getElementById("playAgainBtn").textContent=t.playAgain;
-    document.getElementById("goMenuBtn").textContent=t.mainMenu;
-    document.getElementById("gameOver").style.display="flex";
-    sound.playGameOver();
-  }
-} else {
-  sound.playGameOver();
-  showGameOverMessage(translations[currentLanguage].noMovesLeft);
-}
-}  else if(gameMode==='hard'&&!isPuzzleMode){startTimer();}
+  if(!isPuzzleMode&&getValidMoves().length===0){
+    stopTimer();
+
+    // ── BLIND MOD ─────────────────────────────────────────────────────────────
+    if(gameMode==='blind'){
+      const totalCells=SIZE*SIZE;
+      const visitedCells=score+1;
+      const t=translations[currentLanguage];
+      if(visitedCells>=totalCells){
+        sound.playPuzzleComplete();
+        createConfetti();
+        const isNewRecord=saveHighScore('blind',score);
+        // DÜZELTİLDİ: checkAchievements + showAchievementsInGameOver eklendi
+        checkAchievements();
+        document.getElementById("gameOverMessage").textContent=t.messages.perfect;
+        document.getElementById("finalScore").textContent=score;
+        document.getElementById("finalScoreLbl").textContent=t.finalScore;
+        document.getElementById("starRating").style.display="none";
+        document.getElementById("nextPuzzleBtn").style.display="none";
+        showAchievementsInGameOver();
+        const nm=document.getElementById("newRecordMsg");
+        if(isNewRecord){nm.textContent=t.newRecord;nm.style.display="block";}else nm.style.display="none";
+        document.getElementById("gameOverReason").textContent="";
+        document.getElementById("playAgainBtn").textContent=t.playAgain;
+        document.getElementById("goMenuBtn").textContent=t.mainMenu;
+        document.getElementById("gameOver").style.display="flex";
+        return;
+      }
+    }
+
+    // ── SPEED MOD ─────────────────────────────────────────────────────────────
+    if(gameMode==='speed'){
+      const totalCells=SIZE*SIZE;
+      const visitedCells=score+1;
+      const t=translations[currentLanguage];
+      if(visitedCells>=totalCells){
+        const elapsed=getSpeedElapsed();
+        const isRecord=saveSpeedRecord('speed6x6',elapsed);
+        const best=loadSpeedRecord('speed6x6');
+        sound.playPuzzleComplete();
+        createConfetti();
+        // DÜZELTİLDİ: checkAchievements + showAchievementsInGameOver eklendi
+        checkAchievements();
+        document.getElementById("gameOverMessage").textContent=t.messages.perfect;
+        document.getElementById("finalScore").textContent=formatTime(elapsed);
+        document.getElementById("finalScoreLbl").textContent=t.bestTime;
+        document.getElementById("starRating").style.display="none";
+        document.getElementById("nextPuzzleBtn").style.display="none";
+        showAchievementsInGameOver();
+        const nm=document.getElementById("newRecordMsg");
+        if(isRecord){nm.textContent=t.newSpeedRecord;nm.style.display="block";}else nm.style.display="none";
+        document.getElementById("gameOverReason").textContent=`${t.bestTime}: ${formatTime(best)}`;
+        document.getElementById("playAgainBtn").textContent=t.playAgain;
+        document.getElementById("goMenuBtn").textContent=t.mainMenu;
+        document.getElementById("gameOver").style.display="flex";
+      } else {
+        let message='';
+        if(score<=14)message=t.messages.bad;
+        else if(score<=23)message=t.messages.ok;
+        else if(score<=29)message=t.messages.good;
+        else if(score<=34)message=t.messages.great;
+        else message=t.messages.perfect;
+        document.getElementById("starRating").style.display="none";
+        document.getElementById("nextPuzzleBtn").style.display="none";
+        document.getElementById("achievementsUnlocked").style.display="none";
+        document.getElementById("gameOverMessage").textContent=message;
+        document.getElementById("finalScore").textContent=score;
+        document.getElementById("finalScoreLbl").textContent=t.finalScore;
+        document.getElementById("newRecordMsg").style.display="none";
+        document.getElementById("gameOverReason").textContent=t.noMovesLeft;
+        document.getElementById("playAgainBtn").textContent=t.playAgain;
+        document.getElementById("goMenuBtn").textContent=t.mainMenu;
+        document.getElementById("gameOver").style.display="flex";
+        sound.playGameOver();
+      }
+    } else {
+      sound.playGameOver();
+      showGameOverMessage(translations[currentLanguage].noMovesLeft);
+    }
+  } else if(gameMode==='hard'&&!isPuzzleMode){startTimer();}
 }
 
 function showPuzzleComplete(){
@@ -635,7 +654,6 @@ function draw(){
     if(isPuzzleMode&&targetCell&&x===targetCell.x&&y===targetCell.y)cell.classList.add("target");
     if(board[y][x]===1){
       cell.classList.add("knight");
-      // ── AT GÖRSELİ: inline SVG yerine dış dosya ──
       const img = document.createElement('img');
       img.src = getKnightImgSrc(knightSkin);
       img.alt = 'knight';
@@ -648,15 +666,16 @@ function draw(){
     }
     const isValid=validMoves.some(m=>m.x===x&&m.y===y);
     if(!isWaitingForChaos&&isValid){
-  if(gameMode!=='blind') cell.classList.add("valid");
-  cell.onclick=()=>moveKnight(x,y);
-}
+      if(gameMode!=='blind') cell.classList.add("valid");
+      cell.onclick=()=>moveKnight(x,y);
+    }
     boardEl.appendChild(cell);
   }}
 }
 
 function startGame(mode){gameMode=mode;isPuzzleMode=false;SIZE=mode==='easy'?6:mode==='blind'?6:mode==='speed'?6:mode==='expert'?10:8;hideAllScreens();document.getElementById("gameScreen").style.display="block";document.getElementById("puzzleInfo").classList.remove("active");document.getElementById("undoBtn").style.display="none";timerContainer.style.display=(mode==='hard'||mode==='speed')?'block':'none';updateUI();updateHighScoreDisplay();restartGame();}
-function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();if(gameMode==='speed'){timerEl.textContent='00:00:00';startSpeedTimer();}}function backToMenu(){stopTimer();hideAllScreens();document.getElementById("gameOver").style.display="none";if(isPuzzleMode){document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}else{document.getElementById("modeSelection").style.display="block";}isPuzzleMode=false;}
+function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();if(gameMode==='speed'){timerEl.textContent='00:00:00';startSpeedTimer();}}
+function backToMenu(){stopTimer();hideAllScreens();document.getElementById("gameOver").style.display="none";if(isPuzzleMode){document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}else{document.getElementById("modeSelection").style.display="block";}isPuzzleMode=false;}
 function backToMainMenu(){hideAllScreens();document.getElementById("modeSelection").style.display="block";}
 
 // ─── BAŞLANGIÇ ────────────────────────────────────────────────────────────────
@@ -670,7 +689,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   changeLanguage(savedLanguage);
   loadPuzzleProgress();
   loadAchievements();
-  loadKnightSkin();  // ← yeni: kaydedilen skin yükleniyor
+  loadKnightSkin();
 });
 
 // ─── CHEAT KODU ───────────────────────────────────────────────────────────────
