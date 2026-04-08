@@ -19,5 +19,9 @@
   "perfectionist":        { "icon": "💯", "perfectCount": 80 },
   "speed_demon":          { "icon": "⚡", "perfectLevelRange": [0, 19] },
   "tactician":            { "icon": "🎯", "perfectCount": 50 },
-  "time_master":          { "icon": "⏱️", "timedPerfectCount": 5 }
+  "time_master":          { "icon": "⏱️", "timedPerfectCount": 5 },
+  "blind_complete":       {"icon": "🙈", "blindComplete": true},
+  "speed_first":          {"icon": "⚡", "speedComplete": true},
+  "speed_under2min":      {"icon": "🚀", "speedUnder": 120000},
+  "speed_under1min":     {"icon": "💨", "speedUnder": 60000}
 }
