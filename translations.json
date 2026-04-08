@@ -100,7 +100,11 @@
       "perfectionist":       { "name": "Mükemmeliyetçi",          "desc": "240/240 yıldız topla!" },
       "speed_demon":         { "name": "Hız Şeytanı",             "desc": "İlk 20 seviyeyi 3 yıldızla bitir" },
       "tactician":           { "name": "Taktikçi",                "desc": "50 seviyeyi 3 yıldızla bitir" },
-      "time_master":         { "name": "Zaman Ustası",            "desc": "5 zamanlı seviyeyi 3 yıldızla bitir" }
+      "time_master":         { "name": "Zaman Ustası",            "desc": "5 zamanlı seviyeyi 3 yıldızla bitir" },
+      "blind_complete":      { "name": "Kör Gardiyan",            "desc": "Blind modda tahtayı tamamen doldur (36/36)"},
+      "speed_first":         { "name": "Yıldırım",                "desc": "Speed modda tahtayı ilk kez tamamen doldur"},
+      "speed_under2min":     { "name": "Mach 1",                  "desc": "Speed modda 2 dakikanın altında tamamla"},
+      "speed_under1min":     { "name": "Işık Hızı",               "desc": "Speed modda 1 dakikanın altında tamamla"}
     },
     "messages": {
       "bad":     "MALSIN!",
@@ -216,7 +220,11 @@
       "perfectionist":       { "name": "Perfectionist",             "desc": "Collect 240/240 stars!" },
       "speed_demon":         { "name": "Speed Demon",               "desc": "Complete first 20 levels with 3 stars" },
       "tactician":           { "name": "Tactician",                 "desc": "Complete 50 levels with 3 stars" },
-      "time_master":         { "name": "Time Master",               "desc": "Complete 5 timed levels with 3 stars" }
+      "time_master":         { "name": "Time Master",               "desc": "Complete 5 timed levels with 3 stars" },
+      "blind_complete":      { "name": "Blind Guardian",            "desc": "Complete the Blind Mode (36/36)"},
+      "speed_first":         { "name": "Lightning",                 "desc": "Complete the Speed Mode"},
+      "speed_under2min":     { "name": "Mach 1",                    "desc": "Complete the Speed Mode under 2 minutes"},
+      "speed_under1min":     { "name": "Light Speed",               "desc": "Complete the Speed Mode under 1 minute"}
     },
     "messages": {
       "bad":     "NOT BAD!",
@@ -332,7 +340,11 @@
       "perfectionist":       { "name": "Perfeccionista",           "desc": "¡Consigue 240/240 estrellas!" },
       "speed_demon":         { "name": "Demonio de Velocidad",     "desc": "Completa los primeros 20 niveles con 3 estrellas" },
       "tactician":           { "name": "Táctico",                  "desc": "Completa 50 niveles con 3 estrellas" },
-      "time_master":         { "name": "Maestro del Tiempo",       "desc": "Completa 5 niveles cronometrados con 3 estrellas" }
+      "time_master":         { "name": "Maestro del Tiempo",       "desc": "Completa 5 niveles cronometrados con 3 estrellas" },
+      "blind_complete":      { "name": "Guardián Ciego",           "desc": "Completa el modo ciego (36/36)"},
+      "speed_first":         { "name": "Relámpago",                "desc": "Completa el modo velocidad"},
+      "speed_under2min":     { "name": "Mach 1",                   "desc": "Completa el modo velocidad en menos de 2 minutos"},
+      "speed_under1min":     { "name": "Velocidad de Luz",         "desc": "Completa el modo velocidad en menos de 1 minuto"}
     },
     "messages": {
       "bad":     "¡NO ESTÁ MAL!",
