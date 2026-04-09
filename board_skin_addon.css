@@ -200,3 +200,7 @@
 .board-preview.prev-marble .bp-dark  { background: #99aac0; }
 .board-preview.prev-space  .bp-light { background: #1a0a3a; }
 .board-preview.prev-space  .bp-dark  { background: #0d0520; }
+
+#board.skin-wood   .cell.valid:not(.target) { background: #ffeb3b !important; }
+#board.skin-stone  .cell.valid:not(.target) { background: #ffeb3b !important; }
+#board.skin-marble .cell.valid:not(.target) { background: #ffeb3b !important; }
