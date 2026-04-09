@@ -93,9 +93,11 @@
   </div>
 
   <!-- ===== KİŞİSELLEŞTİRME EKRANI ===== -->
-  <div id="customizeScreen">
+ <div id="customizeScreen">
     <h1 id="customizeTitle">🎨 Kişiselleştir</h1>
-    <p id="customizeSubtitle" style="color:#aaa; margin-bottom:5px;">Atın görünümünü seç</p>
+    <p id="boardSkinSubtitle" style="color:#aaa; margin-bottom:5px; margin-top:20px;">🏁 Tahta görünümünü seç</p>
+    <div class="skin-grid" id="boardSkinGrid"></div>
+    <p id="customizeSubtitle" style="color:#aaa; margin-bottom:5px; margin-top:30px;">♞ Atın görünümünü seç</p>
     <div class="skin-grid" id="skinGrid"></div>
     <div class="controls" style="margin-top:30px;">
       <button onclick="backToMainMenu()" id="backFromCustomizeBtn">⬅️ Ana Menü</button>
@@ -191,6 +193,7 @@ let speedStartTime=0, speedInterval=null;
 
 // ─── AT GÖRSELİ (SKIN) SİSTEMİ ───────────────────────────────────────────────
 let knightSkin = 'classic';
+let boardSkin = 'wood';
 let KNIGHT_SKINS = [];
 
 function fileToSkinId(filename) {
@@ -212,13 +215,90 @@ async function loadKnightSkins() {
     KNIGHT_SKINS = [{ id: 'classic', label: 'Klasik', file: 'knight_classic.svg', emoji: '⬜' }];
   }
 }
+  // ─── TAHTA SKIN SİSTEMİ ───────────────────────────────────
+const BOARD_SKINS = [
+  {
+    id: 'wood',
+    labels: { tr: '🪵 Ahşap', en: '🪵 Wood', es: '🪵 Madera' },
+    previewClass: 'prev-wood',
+    boardBg: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)'
+  },
+  {
+    id: 'stone',
+    labels: { tr: '🪨 Taş', en: '🪨 Stone', es: '🪨 Piedra' },
+    previewClass: 'prev-stone',
+    boardBg: 'linear-gradient(135deg, #4a4a4a 0%, #5a5a5a 50%, #3e3e3e 100%)'
+  },
+  {
+    id: 'marble',
+    labels: { tr: '🔮 Mermer', en: '🔮 Marble', es: '🔮 Mármol' },
+    previewClass: 'prev-marble',
+    boardBg: 'linear-gradient(135deg, #8899aa 0%, #aabbcc 50%, #7788aa 100%)'
+  },
+  {
+    id: 'space',
+    labels: { tr: '🌌 Uzay', en: '🌌 Space', es: '🌌 Espacio' },
+    previewClass: 'prev-space',
+    boardBg: 'linear-gradient(135deg, #0a0015 0%, #1a0030 50%, #050010 100%)'
+  }
+];
+ 
+function saveBoardSkin(id) {
+  boardSkin = id;
+  localStorage.setItem('knightBoardSkin', id);
+  applyBoardSkin();
+}
+ 
+function loadBoardSkin() {
+  const saved = localStorage.getItem('knightBoardSkin') || 'wood';
+  boardSkin = saved;
+  applyBoardSkin();
+}
+ 
+function applyBoardSkin() {
+  const boardEl2 = document.getElementById('board');
+  // tüm skin class'larını kaldır
+  BOARD_SKINS.forEach(s => boardEl2.classList.remove('skin-' + s.id));
+  boardEl2.classList.add('skin-' + boardSkin);
+}
+ 
+function renderBoardSkinGrid() {
+  const grid = document.getElementById('boardSkinGrid');
+  grid.innerHTML = '';
+  BOARD_SKINS.forEach(skin => {
+    const card = document.createElement('div');
+    card.className = 'board-skin-card' + (boardSkin === skin.id ? ' selected' : '');
+ 
+    // 4x4 mini tahta önizleme
+    let previewCells = '';
+    for (let i = 0; i < 16; i++) {
+      const row = Math.floor(i / 4);
+      const col = i % 4;
+      const isDark = (row + col) % 2 === 1;
+      previewCells += `<div class="bp-${isDark ? 'dark' : 'light'}"></div>`;
+    }
+ 
+    card.innerHTML = `
+      <div class="board-preview ${skin.previewClass}">${previewCells}</div>
+      <div class="skin-name">${skin.labels[currentLanguage] || skin.labels['tr']}</div>
+      <div class="skin-check"></div>
+    `;
+    card.onclick = () => {
+      saveBoardSkin(skin.id);
+      renderBoardSkinGrid();
+      if (soundEnabled) sound.playTone(660, 0.08, 'sine');
+    };
+    grid.appendChild(card);
+  });
+}
 
 // ─── KİŞİSELLEŞTİRME EKRANI ──────────────────────────────────────────────────
-function showCustomizeScreen() {
-  hideAllScreens();
-  document.getElementById('customizeScreen').style.display = 'block';
-  renderSkinGrid();
-}
+ function showCustomizeScreen() {
+    hideAllScreens();
+    document.getElementById('customizeScreen').style.display = 'block';
+    renderBoardSkinGrid();
+    renderSkinGrid();
+  }
 
 function renderSkinGrid() {
   const grid = document.getElementById('skinGrid');
@@ -632,6 +712,7 @@ function showGameOverMessage(reason=''){
 function buildWallSet(blocked){const set=new Set(blocked.map(b=>`${b.x},${b.y}`));const walls=new Set();blocked.forEach(b=>{const n=[{x:b.x+1,y:b.y},{x:b.x-1,y:b.y},{x:b.x,y:b.y+1},{x:b.x,y:b.y-1}];if(n.some(nb=>set.has(`${nb.x},${nb.y}`)))walls.add(`${b.x},${b.y}`);});return walls;}
 
 function draw(){
+  applyBoardSkin();
   let cellSize=60,boardMarginTop='8px';
   if(window.innerWidth<=700){
     if(SIZE===6){cellSize=60;boardMarginTop='155px';}
@@ -691,6 +772,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   loadPuzzleProgress();
   loadAchievements();
   loadKnightSkin();
+  loadBoardSkin();
 });
 
 // ─── CHEAT KODU ───────────────────────────────────────────────────────────────
