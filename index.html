@@ -739,8 +739,10 @@ function draw(){
       const img = document.createElement('img');
       img.src = getKnightImgSrc(knightSkin);
       img.alt = 'knight';
-      img.style.width = '80%';
-      img.style.height = '80%';
+      const activeSkin = KNIGHT_SKINS.find(s => s.id === knightSkin);
+      const skinSize = (activeSkin && activeSkin.size) ? activeSkin.size + '%' : '80%';
+      img.style.width = skinSize;
+      img.style.height = skinSize;
       img.style.objectFit = 'contain';
       img.style.pointerEvents = 'none';
       img.style.background = 'transparent';
