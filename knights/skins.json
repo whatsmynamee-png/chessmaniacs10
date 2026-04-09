@@ -1,12 +1,12 @@
 [
-{ "id": "classic", "labels": {"tr": "Klasik", "en": "Classic", "es": "Clásico"}, "file": "knight_white.png", "emoji": "⬜" },
-{ "id": "gold",    "labels": {"tr": "Altın",  "en": "Gold",    "es": "Oro"},     "file": "knight_gold.png",  "emoji": "🟡" },
-{ "id": "royal",   "labels": {"tr": "Kraliyet","en": "Royal",  "es": "Real"},    "file": "knight_royal.png", "emoji": "👑" },
-{ "id": "armored", "labels": {"tr": "Zırhlı", "en": "Armored", "es": "Blindado"},"file": "knight_armored.png","emoji": "⚔️" },
-{ "id": "flame",   "labels": {"tr": "Alevli", "en": "Flame",   "es": "Llama"},   "file": "knight_flame.png", "emoji": "🔥" },
-{ "id": "robot",   "labels": {"tr": "Robotik","en": "Robot",   "es": "Robot"},   "file": "knight_robot.png", "emoji": "🤖" },
-{ "id": "janissary", "labels": {"tr": "Yeniçeri", "en": "Janissary", "es": "Jenízaro"}, "file": "knight_janissary.png", "emoji": "🗡️" },
-{ "id": "seahorse", "labels": {"tr": "Denizatı", "en": "Seahorse", "es": "Caballo de Mar"}, "file": "knight_seahorse.png", "emoji": "🔱" },
-{ "id": "pegasus", "labels": {"tr": "Pegasus","en": "Pegasus", "es": "Pegaso"},  "file": "knight_pegasus.png","emoji": "🪽" },
-{ "id": "unicorn", "labels": {"tr": "Unicorn","en": "Unicorn", "es": "Unicornio"},"file": "knight_unicorn.png","emoji": "🦄" }
+  { "id": "classic",   "labels": {"tr": "Klasik",   "en": "Classic",   "es": "Clásico"},        "file": "knight_white.png",     "emoji": "⬜", "size": 80 },
+  { "id": "gold",      "labels": {"tr": "Altın",    "en": "Gold",      "es": "Oro"},            "file": "knight_gold.png",      "emoji": "🟡", "size": 80 },
+  { "id": "royal",     "labels": {"tr": "Kraliyet", "en": "Royal",     "es": "Real"},           "file": "knight_royal.png",     "emoji": "👑", "size": 80 },
+  { "id": "armored",   "labels": {"tr": "Zırhlı",   "en": "Armored",   "es": "Blindado"},       "file": "knight_armored.png",   "emoji": "⚔️", "size": 80 },
+  { "id": "flame",     "labels": {"tr": "Alevli",   "en": "Flame",     "es": "Llama"},          "file": "knight_flame.png",     "emoji": "🔥", "size": 80 },
+  { "id": "robot",     "labels": {"tr": "Robotik",  "en": "Robot",     "es": "Robot"},          "file": "knight_robot.png",     "emoji": "🤖", "size": 80 },
+  { "id": "janissary", "labels": {"tr": "Yeniçeri", "en": "Janissary", "es": "Jenízaro"},       "file": "knight_janissary.png", "emoji": "🗡️", "size": 80 },
+  { "id": "seahorse",  "labels": {"tr": "Denizatı", "en": "Seahorse",  "es": "Caballo de Mar"}, "file": "knight_seahorse.png",  "emoji": "🔱", "size": 80 },
+  { "id": "pegasus",   "labels": {"tr": "Pegasus",  "en": "Pegasus",   "es": "Pegaso"},         "file": "knight_pegasus.png",   "emoji": "🪽", "size": 80 },
+  { "id": "unicorn",   "labels": {"tr": "Unicorn",  "en": "Unicorn",   "es": "Unicornio"},      "file": "knight_unicorn.png",   "emoji": "🦄", "size": 80 }
 ]
