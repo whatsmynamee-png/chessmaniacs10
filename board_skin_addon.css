@@ -204,3 +204,8 @@
 #board.skin-wood   .cell.valid:not(.target) { background: #ffeb3b !important; }
 #board.skin-stone  .cell.valid:not(.target) { background: #ffeb3b !important; }
 #board.skin-marble .cell.valid:not(.target) { background: #ffeb3b !important; }
+
+#board[class*="skin-"] .cell.target::after {
+  content: '🎯' !important;
+  z-index: 5 !important;
+}
