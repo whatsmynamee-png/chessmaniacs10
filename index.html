@@ -127,9 +127,9 @@
       <div><h2 style="margin:0;">♟️ CHESSMANIA <span id="modeLabel"></span></h2></div>
       <div style="display:flex;gap:10px;align-items:center;"><button class="sound-toggle" onclick="toggleSound()"><span id="soundIcon">🔊</span></button></div>
     </div>
-    <div class="stats" style="justify-content:center; margin-top:15px;">
-      <div class="stat-item"><div class="stat-label" id="scoreLbl">Skor</div><div class="stat-value" id="score">0</div></div>
-      <div class="stat-item"><div class="stat-label" id="highScoreLbl">En Yüksek</div><div class="stat-value record" id="highScore">0</div></div>
+    <div class="stats" style="justify-content:center; margin-top:15px;" id="statsBar">
+    <div class="stat-item" id="scoreStatItem"><div class="stat-label" id="scoreLbl">Skor</div><div class="stat-value" id="score">0</div></div>
+    <div class="stat-item" id="highScoreStatItem"><div class="stat-label" id="highScoreLbl">En Yüksek</div><div class="stat-value record" id="highScore">0</div></div>
     </div>
     <div class="puzzle-info" id="puzzleInfo">
       <div class="level-number" id="levelNumber">Seviye 1</div>
@@ -471,6 +471,8 @@ function startPuzzle(levelIndex){
   timerContainer.style.display=currentTimeLimit>0?'block':'none';
   updateUI();restartPuzzle();
   if(levelIndex===0){const t=translations[currentLanguage];setTimeout(()=>{showTutorialMessage(t.tutorialMessage);},500);}
+  document.getElementById('scoreStatItem').style.display = 'none';
+  document.getElementById('highScoreStatItem').style.display = 'none';
 }
 
 function restartPuzzle(){
@@ -757,7 +759,7 @@ function draw(){
   }}
 }
 
-function startGame(mode){gameMode=mode;isPuzzleMode=false;SIZE=mode==='easy'?6:mode==='blind'?6:mode==='speed'?6:mode==='expert'?10:8;hideAllScreens();document.getElementById("gameScreen").style.display="block";document.getElementById("puzzleInfo").classList.remove("active");document.getElementById("undoBtn").style.display="none";timerContainer.style.display=(mode==='hard'||mode==='speed')?'block':'none';updateUI();updateHighScoreDisplay();restartGame();}
+function startGame(mode){gameMode=mode;isPuzzleMode=false;SIZE=mode==='easy'?6:mode==='blind'?6:mode==='speed'?6:mode==='expert'?10:8;hideAllScreens();document.getElementById("gameScreen").style.display="block";document.getElementById("puzzleInfo").classList.remove("active");document.getElementById("undoBtn").style.display="none";timerContainer.style.display=(mode==='hard'||mode==='speed')?'block':'none';updateUI();updateHighScoreDisplay();restartGame();document.getElementById('scoreStatItem').style.display='block';document.getElementById('highScoreStatItem').style.display='block';}
 function restartGame(){stopTimer();if(isPuzzleMode){restartPuzzle();return;}board=Array.from({length:SIZE},()=>Array(SIZE).fill(0));const sx=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?2:gameMode==='expert'?4:3,sy=gameMode==='easy'||gameMode==='blind'||gameMode==='speed'?3:gameMode==='expert'?5:4;knight={x:sx,y:sy};board[sy][sx]=1;score=0;scoreEl.textContent=score;updateHighScoreDisplay();document.getElementById("gameOver").style.display="none";draw();if(gameMode==='hard')startTimer();if(gameMode==='speed'){timerEl.textContent='00:00:00';startSpeedTimer();}}
 function backToMenu(){stopTimer();hideAllScreens();document.getElementById("gameOver").style.display="none";if(isPuzzleMode){document.getElementById("puzzleSelection").style.display="block";renderPuzzleLevels();}else{document.getElementById("modeSelection").style.display="block";}isPuzzleMode=false;}
 function backToMainMenu(){hideAllScreens();document.getElementById("modeSelection").style.display="block";}
