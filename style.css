@@ -79,7 +79,7 @@ body.nature-theme { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%
 }
 .valid  { background: #ffeb3b; }
 .target { background: #4CAF50 !important; animation: target-pulse 1.5s infinite; }
-.target::after { content: '🎯'; position: absolute; font-size: 32px; pointer-events: none;  top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.target::after { content: '🎯'; font-size: 32px; pointer-events: none; }
 
 @keyframes target-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.7); }
