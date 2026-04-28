@@ -108,41 +108,6 @@
     );
 }
 
-/* ── UZAY ── */
-#board.skin-space {
-  background: linear-gradient(135deg, #0a0015 0%, #1a0030 50%, #050010 100%);
-  border: 2px solid #3a006a;
-  box-shadow: 0 6px 30px rgba(120,0,255,0.3);
-}
-#board.skin-space::before { border-color: #6600cc; }
-#board.skin-space .cell      { background: #1a0a3a; }
-#board.skin-space .cell.dark { background: #0d0520; }
-
-/* uzay: yıldız noktaları */
-#board.skin-space .cell::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 15% 25%, rgba(255,255,255,0.55) 0.8px, transparent 0.8px),
-    radial-gradient(circle at 80% 15%, rgba(255,255,255,0.4) 0.6px, transparent 0.6px),
-    radial-gradient(circle at 60% 75%, rgba(255,255,255,0.45) 0.7px, transparent 0.7px),
-    radial-gradient(circle at 35% 85%, rgba(200,150,255,0.5) 0.6px, transparent 0.6px),
-    radial-gradient(circle at 90% 55%, rgba(255,255,255,0.35) 0.5px, transparent 0.5px);
-  background-size: 40px 40px, 55px 55px, 35px 35px, 48px 48px, 62px 62px;
-  pointer-events: none;
-}
-#board.skin-space .cell.dark::after {
-  background-image:
-    radial-gradient(circle at 70% 30%, rgba(255,255,255,0.5) 0.8px, transparent 0.8px),
-    radial-gradient(circle at 20% 70%, rgba(180,100,255,0.55) 0.7px, transparent 0.7px),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0.5px, transparent 0.5px);
-  background-size: 45px 45px, 38px 38px, 60px 60px;
-}
-
-/* uzay: valid hamle sarısını mor yap */
-#board.skin-space .cell.valid { background: #5500cc !important; }
-
 /* ── TÜM SKİNLERDE: blocked/target/valid override koruması ── */
 #board[class*="skin-"] .cell.blocked    { background: #1a0f0a !important; }
 #board[class*="skin-"] .cell.target     { background: #4CAF50 !important; }
@@ -154,7 +119,6 @@
   #board.skin-wood   { background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%) !important; }
   #board.skin-stone  { background: linear-gradient(135deg, #4a4a4a 0%, #5a5a5a 50%, #3e3e3e 100%) !important; }
   #board.skin-marble { background: linear-gradient(135deg, #8899aa 0%, #aabbcc 50%, #7788aa 100%) !important; }
-  #board.skin-space  { background: linear-gradient(135deg, #0a0015 0%, #1a0030 50%, #050010 100%) !important; }
 }
 
 /* ── KİŞİSELLEŞTİRME: tahta önizleme kartı ── */
@@ -198,8 +162,6 @@
 .board-preview.prev-stone  .bp-dark  { background: #7a7a72; }
 .board-preview.prev-marble .bp-light { background: #eef2f8; }
 .board-preview.prev-marble .bp-dark  { background: #99aac0; }
-.board-preview.prev-space  .bp-light { background: #1a0a3a; }
-.board-preview.prev-space  .bp-dark  { background: #0d0520; }
 
 #board.skin-wood   .cell.valid:not(.target) { background: #ffeb3b !important; }
 #board.skin-stone  .cell.valid:not(.target) { background: #ffeb3b !important; }
