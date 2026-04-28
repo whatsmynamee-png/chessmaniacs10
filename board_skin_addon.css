@@ -217,10 +217,16 @@
 .board-preview.prev-stone  .bp-dark  { background: #7a7a72; }
 .board-preview.prev-marble .bp-light { background: #eef2f8; }
 .board-preview.prev-marble .bp-dark  { background: #99aac0; }
+.board-preview.prev-ice .bp-light { background: #e8f4fa; }
+.board-preview.prev-ice .bp-dark  { background: #a0c8e0; }
+.board-preview.prev-sakura .bp-light { background: #fce8ed; }
+.board-preview.prev-sakura .bp-dark  { background: #d4869a; }
 
 #board.skin-wood   .cell.valid:not(.target) { background: #ffeb3b !important; }
 #board.skin-stone  .cell.valid:not(.target) { background: #ffeb3b !important; }
 #board.skin-marble .cell.valid:not(.target) { background: #ffeb3b !important; }
+#board.skin-ice { background: linear-gradient(135deg, #a8d8ea 0%, #c9e8f5 50%, #a8d8ea 100%) !important; }
+#board.skin-sakura { background: linear-gradient(135deg, #c47a8a 0%, #d4869a 50%, #c47a8a 100%) !important; }
 
 #board[class*="skin-"] .cell.target::after {
   content: '🎯' !important;
