@@ -167,7 +167,6 @@
 #board[class*="skin-"] .cell.blocked    { background: #1a0f0a !important; }
 #board[class*="skin-"] .cell.target     { background: #4CAF50 !important; }
 #board[class*="skin-"] .cell.valid:not(.target) { opacity: 0.92; }
-#board.skin-sakura .cell.valid:not(.target) { background: #ffb6c8 !important; opacity: 1; }
 
 /* ── MOBİL: board skin arka planını küçük ekranda da uygula ── */
 @media (max-width: 700px) {
