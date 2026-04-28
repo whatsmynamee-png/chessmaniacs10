@@ -161,7 +161,7 @@
 }
 
 /* valid hamle rengi */
-#board.skin-sakura .cell.valid:not(.target) { background: #ffb6c8 !important; }
+#board.skin-sakura .cell.valid:not(.target) { background: #ffeb3b !important; }
 
 /* ── TÜM SKİNLERDE: blocked/target/valid override koruması ── */
 #board[class*="skin-"] .cell.blocked    { background: #1a0f0a !important; }
