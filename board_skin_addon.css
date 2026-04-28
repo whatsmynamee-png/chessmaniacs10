@@ -108,6 +108,61 @@
     );
 }
 
+/* ── BUZ ── */
+#board.skin-ice {
+  background: linear-gradient(135deg, #a8d8ea 0%, #c9e8f5 50%, #a8d8ea 100%);
+  border: 2px solid #7ab8d4;
+  box-shadow: 0 6px 20px rgba(100,200,255,0.3);
+}
+#board.skin-ice::before { border-color: #b8e0f0; }
+#board.skin-ice .cell      { background: #e8f4fa; }
+#board.skin-ice .cell.dark { background: #a0c8e0; }
+
+/* buz doku efekti */
+#board.skin-ice .cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      60deg,
+      transparent,
+      transparent 10px,
+      rgba(255,255,255,0.15) 10px,
+      rgba(255,255,255,0.15) 11px
+    );
+  pointer-events: none;
+}
+
+/* valid hamle rengi */
+#board.skin-ice .cell.valid:not(.target) { background: #ffeb3b !important; }
+
+/* ── KİRAZ ÇİÇEĞİ ── */
+#board.skin-sakura {
+  background: linear-gradient(135deg, #c47a8a 0%, #d4869a 50%, #c47a8a 100%);
+  border: 2px solid #a85a6a;
+  box-shadow: 0 6px 20px rgba(196,122,138,0.4);
+}
+#board.skin-sakura::before { border-color: #e8a0b0; }
+#board.skin-sakura .cell      { background: #fce8ed; }
+#board.skin-sakura .cell.dark { background: #d4869a; }
+
+/* kiraz çiçeği: yaprak doku efekti */
+#board.skin-sakura .cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse at 20% 30%, rgba(249,182,197,0.4) 4px, transparent 4px),
+    radial-gradient(ellipse at 75% 65%, rgba(250,208,216,0.3) 3px, transparent 3px),
+    radial-gradient(ellipse at 50% 80%, rgba(249,198,208,0.35) 3.5px, transparent 3.5px);
+  background-size: 38px 38px, 52px 52px, 44px 44px;
+  pointer-events: none;
+}
+
+/* valid hamle rengi */
+#board.skin-sakura .cell.valid:not(.target) { background: #ffb6c8 !important; }
+
 /* ── TÜM SKİNLERDE: blocked/target/valid override koruması ── */
 #board[class*="skin-"] .cell.blocked    { background: #1a0f0a !important; }
 #board[class*="skin-"] .cell.target     { background: #4CAF50 !important; }
