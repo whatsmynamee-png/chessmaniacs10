@@ -167,13 +167,14 @@
 #board[class*="skin-"] .cell.blocked    { background: #1a0f0a !important; }
 #board[class*="skin-"] .cell.target     { background: #4CAF50 !important; }
 #board[class*="skin-"] .cell.valid:not(.target) { opacity: 0.92; }
-#board.skin-space .cell.target          { background: #00e676 !important; }
 
 /* ── MOBİL: board skin arka planını küçük ekranda da uygula ── */
 @media (max-width: 700px) {
   #board.skin-wood   { background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%) !important; }
   #board.skin-stone  { background: linear-gradient(135deg, #4a4a4a 0%, #5a5a5a 50%, #3e3e3e 100%) !important; }
   #board.skin-marble { background: linear-gradient(135deg, #8899aa 0%, #aabbcc 50%, #7788aa 100%) !important; }
+  #board.skin-ice { background: linear-gradient(135deg, #a8d8ea 0%, #c9e8f5 50%, #a8d8ea 100%) !important; }
+  #board.skin-sakura { background: linear-gradient(135deg, #c47a8a 0%, #d4869a 50%, #c47a8a 100%) !important; }
 }
 
 /* ── KİŞİSELLEŞTİRME: tahta önizleme kartı ── */
@@ -225,8 +226,7 @@
 #board.skin-wood   .cell.valid:not(.target) { background: #ffeb3b !important; }
 #board.skin-stone  .cell.valid:not(.target) { background: #ffeb3b !important; }
 #board.skin-marble .cell.valid:not(.target) { background: #ffeb3b !important; }
-#board.skin-ice { background: linear-gradient(135deg, #a8d8ea 0%, #c9e8f5 50%, #a8d8ea 100%) !important; }
-#board.skin-sakura { background: linear-gradient(135deg, #c47a8a 0%, #d4869a 50%, #c47a8a 100%) !important; }
+
 
 #board[class*="skin-"] .cell.target::after {
   content: '🎯' !important;
