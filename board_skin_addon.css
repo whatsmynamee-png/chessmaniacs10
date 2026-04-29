@@ -148,7 +148,7 @@
 #board.skin-sakura .cell.dark { background: #d4869a; }
 
 /* kiraz çiçeği: yaprak doku efekti */
-#board.skin-sakura .cell::after {
+#board.skin-sakura .cell:not(.blocked)::after {
   content: '';
   position: absolute;
   inset: 0;
