@@ -115,8 +115,10 @@
     },
     "customizeBtn": "🎨 Kişiselleştir",
 "customizeTitle": "🎨 Kişiselleştir",
-"customizeSubtitle": "Atın görünümünü seç",
-"backFromCustomize": "⬅️ Ana Menü"
+"themeLabelSubtitle": "🎨 Arka plan temasını seç",
+"boardSkinSubtitle": "🏁 Tahta görünümünü seç",
+"customizeSubtitle": "🐴Atın görünümünü seç",
+"backFromCustomize": "⬅️ Ana Menü"   
   },
 
   "en": {
@@ -235,7 +237,9 @@
     },
     "customizeBtn": "🎨 Customize",
 "customizeTitle": "🎨 Customize",
-"customizeSubtitle": "Choose your knight skin",
+"themeLabelSubtitle": "🎨 Choose background theme",
+"boardSkinSubtitle": "🏁 Choose board skin",
+"customizeSubtitle": "🐴Choose your knight skin",
 "backFromCustomize": "⬅️ Main Menu"
   },
 
@@ -355,7 +359,9 @@
     },
       "customizeBtn": "🎨 Personalizar",
 "customizeTitle": "🎨 Personalizar",
-"customizeSubtitle": "Elige el aspecto de tu caballo",
+"themeLabelSubtitle": "🎨 Elige el tema de fondo",
+"boardSkinSubtitle": "🏁 Elige el tablero",
+"customizeSubtitle": "🐴Elige el aspecto de tu caballo",
 "backFromCustomize": "⬅️ Menú"
   }
 }
