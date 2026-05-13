@@ -503,10 +503,13 @@ function undoMove(){if(moveHistory.length===0||currentPuzzleLevel>=10||isWaiting
 function nextPuzzle(){if(currentPuzzleLevel<allPuzzleLevels.length-1)startPuzzle(currentPuzzleLevel+1);else backToMenu();}
 
 function changeLanguage(lang) {
-  // 1. Seçilen dili hafızaya kaydet
+  // Eğer seçilen dil zaten o anki dilse hiçbir şey yapma (sonsuz döngüyü engeller)
+  if (localStorage.getItem('knightLanguage') === lang) return;
+
+  // Yeni dili kaydet
   localStorage.setItem('knightLanguage', lang);
   
-  // 2. Sayfayı yenile (En garantisi budur, tüm yazılar dile göre yeniden yüklenir)
+  // Sayfayı sadece BİR kere yenile
   location.reload();
 }
 
