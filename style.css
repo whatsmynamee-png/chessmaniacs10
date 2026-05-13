@@ -22,7 +22,7 @@ body {
 body.light-theme  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 body.dark-theme   { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
 body.nature-theme { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%); }
-body.sunset-theme { background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); }
+body.sunset-theme { background: linear-gradient(135deg, #f2bc54 0%, #f2a354 100%); }
 
 #container { width: 100%; max-width: 700px; }
 
@@ -363,7 +363,7 @@ button.info    { background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%); 
 .theme-btn.dark   { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
 .theme-btn.light  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 .theme-btn.nature { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%); }
-.theme-btn.sunset { background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); }
+.theme-btn.sunset { background: linear-gradient(135deg, #f2bc54 0%, #f2a354 100%); }
 
 /* Kişiselleştirme ekranındaki tema butonları için özel düzenleme */
 #customizeScreen .theme-selector {
