@@ -371,6 +371,30 @@ button.info    { background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%); 
 .theme-btn.light  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 .theme-btn.nature { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%); }
 
+/* Kişiselleştirme ekranındaki tema butonları için özel düzenleme */
+#customizeScreen .theme-selector {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 15px;
+    width: fit-content;
+    margin: 10px auto 25px auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#customizeScreen .theme-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#customizeScreen .theme-btn.active {
+    border-color: #ffeb3b;
+    transform: scale(1.15);
+    box-shadow: 0 0 20px rgba(255, 235, 59, 0.3);
+}
+
 /* ── SES BUTONU ── */
 .sound-toggle {
   background: rgba(0,0,0,0.3);
