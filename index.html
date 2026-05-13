@@ -502,12 +502,12 @@ function updatePuzzleInfoDisplay(){const t=translations[currentLanguage];const p
 function undoMove(){if(moveHistory.length===0||currentPuzzleLevel>=10||isWaitingForChaos)return;const last=moveHistory.pop();board[knight.y][knight.x]=0;knight=last;board[knight.y][knight.x]=1;score=Math.max(0,score-1);document.getElementById("movesCount").textContent=moveHistory.length;draw();}
 function nextPuzzle(){if(currentPuzzleLevel<allPuzzleLevels.length-1)startPuzzle(currentPuzzleLevel+1);else backToMenu();}
 
-function changeLanguage(lang){
-  currentLanguage=lang;localStorage.setItem('knightLanguage',lang);
-  ['EN','TR','ES'].forEach(code=>{const btn=document.getElementById('flag'+code);if(btn){if(code===lang.toUpperCase())btn.classList.add('active-lang');else btn.classList.remove('active-lang');}});
-  updateUI();
-  if(document.getElementById("puzzleSelection").style.display==="block")renderPuzzleLevels();
-  if(document.getElementById("statsScreen").style.display==="block"){renderAchievements();const t=translations[currentLanguage];document.getElementById("statsTitle").textContent=t.statsTitle;document.getElementById("totalStarsLbl").textContent=t.totalStarsLbl;document.getElementById("completedLevelsLbl").textContent=t.completedLevelsLbl;document.getElementById("perfectLevelsLbl").textContent=t.perfectLevelsLbl;document.getElementById("successRateLbl").textContent=t.successRateLbl;document.getElementById("achievementsTitle").textContent=t.achievementsTitle;}
+function changeLanguage(lang) {
+  // 1. Seçilen dili hafızaya kaydet
+  localStorage.setItem('knightLanguage', lang);
+  
+  // 2. Sayfayı yenile (En garantisi budur, tüm yazılar dile göre yeniden yüklenir)
+  location.reload();
 }
 
 function updateUI(){const t=translations[currentLanguage];document.querySelector('#modeSelection h1').textContent='♟️ '+t.title;document.getElementById('themeLabel').textContent=t.theme;document.getElementById('themeDark').title=t.darkTheme;document.getElementById('themeLight').title=t.lightTheme;document.getElementById('themeNature').title=t.natureTheme;document.getElementById('modeEasy').innerHTML=`${t.easyMode}<br><small style="font-size:14px;">${t.easyDesc}</small>`;document.getElementById('modeClassic').innerHTML=`${t.classicMode}<br><small style="font-size:14px;">${t.classicDesc}</small>`;document.getElementById('modeHard').innerHTML=`${t.hardMode}<br><small style="font-size:14px;">${t.hardDesc}</small>`;document.getElementById('modeExpert').innerHTML=`${t.expertMode}<br><small style="font-size:14px;">${t.expertDesc}</small>`;document.getElementById('modePuzzle').innerHTML=`${t.puzzleMode}<br><small style="font-size:14px;">${t.puzzleDesc}</small>`;document.getElementById('viewStatsMainBtn').textContent=t.viewStatsMain;document.getElementById('customizeBtn').textContent=t.customizeBtn;document.getElementById('modeBlind').innerHTML=`${t.blindMode}<br><small style="font-size:14px;">${t.blindDesc}</small>`;document.getElementById('modeSpeed').innerHTML=`${t.speedMode}<br><small style="font-size:14px;">${t.speedDesc}</small>`;
