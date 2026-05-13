@@ -22,6 +22,7 @@ body {
 body.light-theme  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 body.dark-theme   { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
 body.nature-theme { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%); }
+body.sunset-theme { background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); }
 
 #container { width: 100%; max-width: 700px; }
 
@@ -356,20 +357,13 @@ button.info    { background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%); 
 
 /* ── TEMA BUTONLARI ── */
 .theme-selector { display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; }
-.theme-btn {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0;
-}
+.theme-btn { width: 35px; height: 35px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.3s ease;padding: 0;}
 .theme-btn:hover  { transform: scale(1.15); border-color: #fff; }
 .theme-btn.active { border-color: #ffeb3b; box-shadow: 0 0 15px rgba(255,235,59,0.6); }
 .theme-btn.dark   { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
 .theme-btn.light  { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 .theme-btn.nature { background: linear-gradient(135deg, #134e4a 0%, #065f46 100%); }
+.theme-btn.sunset { background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); }
 
 /* Kişiselleştirme ekranındaki tema butonları için özel düzenleme */
 #customizeScreen .theme-selector {
