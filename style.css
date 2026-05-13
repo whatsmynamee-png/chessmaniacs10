@@ -505,6 +505,11 @@ button.info    { background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%); 
 #customizeBtn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(196,69,105,0.6); }
 #customizeScreen { display: none; text-align: center; }
 #customizeScreen h1 { font-size: 36px; margin-bottom: 10px; }
+/* Yazıların her temada okunması için beyaz yapıyoruz */
+#customizeScreen p {color: #ffffff !important; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); font-weight: 600;}
+
+/* Kişiselleştirme ekranındaki başlığı da bembeyaz ve net yapalım */
+#customizeScreen h1 {color: #ffffff !important;text-shadow: 2px 2px 5px rgba(0,0,0,0.4);}
 
 .skin-grid {
   display: grid;
