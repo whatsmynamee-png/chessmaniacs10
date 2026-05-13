@@ -71,13 +71,7 @@
         </svg>
       </button>
     </div>
-    <div class="theme-selector" style="justify-content:center; margin:20px 0;">
-      <span id="themeLabel" style="font-size:14px; margin-right:10px;">Tema:</span>
-      <button class="theme-btn dark active" onclick="changeTheme('dark')" id="themeDark"></button>
-      <button class="theme-btn light" onclick="changeTheme('light')" id="themeLight"></button>
-      <button class="theme-btn nature" onclick="changeTheme('nature')" id="themeNature"></button>
-    </div>
-    <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin: 30px 0 20px 0;">
+       <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin: 30px 0 20px 0;">
       <button onclick="showStatsScreen()" style="background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); padding: 15px 40px; font-size: 18px; border-radius: 12px; border: none; color: white; cursor: pointer; box-shadow: 0 6px 20px rgba(0,188,212,0.4); transition: all 0.3s ease; font-weight: bold;" onmouseover="this.style.transform='translateY(-3px) scale(1.05)'" onmouseout="this.style.transform='translateY(0) scale(1)'" id="viewStatsMainBtn">📊 İstatistiklerim & Başarımlar</button>
       <button id="customizeBtn" onclick="showCustomizeScreen()">🎨 Kişiselleştir</button>
     </div>
@@ -93,16 +87,26 @@
   </div>
 
   <!-- ===== KİŞİSELLEŞTİRME EKRANI ===== -->
- <div id="customizeScreen">
+<div id="customizeScreen">
     <h1 id="customizeTitle">🎨 Kişiselleştir</h1>
+
+    <p id="themeLabelSubtitle" style="color:#aaa; margin-bottom:10px; margin-top:20px;">🎨 Arka plan temasını seç</p>
+    <div class="theme-selector" style="justify-content:center; margin-bottom:20px; gap:15px;">
+      <button class="theme-btn dark active" onclick="changeTheme('dark')" id="themeDark"></button>
+      <button class="theme-btn light" onclick="changeTheme('light')" id="themeLight"></button>
+      <button class="theme-btn nature" onclick="changeTheme('nature')" id="themeNature"></button>
+    </div>
+
     <p id="boardSkinSubtitle" style="color:#aaa; margin-bottom:5px; margin-top:20px;">🏁 Tahta görünümünü seç</p>
     <div class="skin-grid" id="boardSkinGrid"></div>
+
     <p id="customizeSubtitle" style="color:#aaa; margin-bottom:5px; margin-top:30px;">♞ Atın görünümünü seç</p>
     <div class="skin-grid" id="skinGrid"></div>
+
     <div class="controls" style="margin-top:30px;">
       <button onclick="backToMainMenu()" id="backFromCustomizeBtn">⬅️ Ana Menü</button>
     </div>
-  </div>
+ </div>
 
   <div id="puzzleSelection">
     <h1 id="puzzleLevelsTitle">🧩 Puzzle Seviyeleri</h1>
